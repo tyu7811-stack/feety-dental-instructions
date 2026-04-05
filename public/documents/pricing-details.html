@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>料金プラン詳細資料 - 技工指示書自動化システム</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      line-height: 1.8;
+      color: #1a1a1a;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .header { 
+      text-align: center;
+      border-bottom: 3px solid #2563eb;
+      padding-bottom: 30px;
+      margin-bottom: 40px;
+    }
+    .header h1 { 
+      font-size: 28px;
+      color: #2563eb;
+      margin-bottom: 10px;
+    }
+    .header p { color: #666; font-size: 14px; }
+    h2 { 
+      font-size: 20px;
+      color: #1e3a5f;
+      margin: 40px 0 20px;
+      padding-left: 15px;
+      border-left: 4px solid #2563eb;
+    }
+    h3 { 
+      font-size: 16px;
+      color: #333;
+      margin: 25px 0 15px;
+    }
+    p { margin-bottom: 15px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      border: 1px solid #d1d5db;
+      padding: 12px 15px;
+      text-align: left;
+    }
+    th {
+      background: #f3f4f6;
+      font-weight: bold;
+    }
+    .plan-header {
+      text-align: center;
+      font-weight: bold;
+    }
+    .plan-lite { background: #f1f5f9; }
+    .plan-standard { background: #eff6ff; }
+    .plan-pro { background: #fef3c7; }
+    .price {
+      font-size: 24px;
+      font-weight: bold;
+      color: #2563eb;
+    }
+    .price-note {
+      font-size: 12px;
+      color: #666;
+    }
+    .check { color: #10b981; font-weight: bold; }
+    .cross { color: #ef4444; }
+    .limited { color: #f59e0b; font-size: 12px; }
+    .highlight {
+      background: #fff7e6;
+      border-left: 4px solid #f59e0b;
+      padding: 15px 20px;
+      margin: 20px 0;
+    }
+    .note-box {
+      background: #f0f7ff;
+      border: 1px solid #c5ddf8;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .footer {
+      margin-top: 60px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+    }
+    @media print {
+      body { padding: 20px; }
+      table { font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>技工指示書自動化システム</h1>
+    <p>料金プラン詳細資料</p>
+    <p style="margin-top: 10px; font-size: 12px;">発行日: 2026年3月</p>
+  </div>
+
+  <h2>1. 料金プラン一覧</h2>
+  
+  <table>
+    <tr>
+      <th style="width: 30%;"></th>
+      <th class="plan-header plan-lite" style="width: 23%;">ライト</th>
+      <th class="plan-header plan-standard" style="width: 23%;">スタンダード</th>
+      <th class="plan-header plan-pro" style="width: 24%;">プロフェッショナル</th>
+    </tr>
+    <tr>
+      <td><strong>月額料金（税別）</strong></td>
+      <td class="plan-lite" style="text-align: center;">
+        <span class="price">¥2,000</span><br>
+        <span class="price-note">/月</span>
+      </td>
+      <td class="plan-standard" style="text-align: center;">
+        <span class="price">¥12,000</span><br>
+        <span class="price-note">/月</span>
+      </td>
+      <td class="plan-pro" style="text-align: center;">
+        <span class="price">¥39,800</span><br>
+        <span class="price-note">/月</span>
+      </td>
+    </tr>
+    <tr>
+      <td>対象</td>
+      <td class="plan-lite">小規模技工所・医院</td>
+      <td class="plan-standard">成長中の技工所・医院</td>
+      <td class="plan-pro">大規模技工所・医院</td>
+    </tr>
+    <tr>
+      <td>提携医院数</td>
+      <td class="plan-lite" style="text-align: center;">5件まで</td>
+      <td class="plan-standard" style="text-align: center;">20件まで</td>
+      <td class="plan-pro" style="text-align: center;">無制限</td>
+    </tr>
+  </table>
+
+  <div class="highlight">
+    <strong>追加料金について</strong><br>
+    ライトプラン・スタンダードプランでは、提携医院が上限を超える場合、<br>
+    <strong>1医院につき +¥2,000/月</strong> で追加いただきます。
+  </div>
+
+  <h2>2. 機能比較表</h2>
+
+  <table>
+    <tr>
+      <th>機能</th>
+      <th class="plan-header plan-lite">ライト</th>
+      <th class="plan-header plan-standard">スタンダード</th>
+      <th class="plan-header plan-pro">プロ</th>
+    </tr>
+    <tr>
+      <td colspan="4" style="background: #f9fafb; font-weight: bold;">基本機能</td>
+    </tr>
+    <tr>
+      <td>技工指示書作成・送信</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+    </tr>
+    <tr>
+      <td>案件管理</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+    </tr>
+    <tr>
+      <td>納品書作成</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+    </tr>
+    <tr>
+      <td>指示書履歴閲覧</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+    </tr>
+    <tr>
+      <td>歯式図ペン書き込み</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+    </tr>
+    <tr>
+      <td colspan="4" style="background: #f9fafb; font-weight: bold;">管理機能</td>
+    </tr>
+    <tr>
+      <td>提携医院管理</td>
+      <td style="text-align: center;">5件まで</td>
+      <td style="text-align: center;">20件まで</td>
+      <td style="text-align: center;">無制限</td>
+    </tr>
+    <tr>
+      <td>金額マスタ設定</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+    </tr>
+    <tr>
+      <td>締め処理</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+    </tr>
+    <tr>
+      <td colspan="4" style="background: #f9fafb; font-weight: bold;">分析機能</td>
+    </tr>
+    <tr>
+      <td>高度な分析</td>
+      <td style="text-align: center;" class="cross">−</td>
+      <td style="text-align: center;"><span class="limited">制限あり</span></td>
+      <td style="text-align: center;" class="check">○</td>
+    </tr>
+    <tr>
+      <td>売上・コスト分析</td>
+      <td style="text-align: center;" class="cross">−</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+    </tr>
+    <tr>
+      <td>技工物種類別分析</td>
+      <td style="text-align: center;" class="cross">−</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+    </tr>
+    <tr>
+      <td>納期遵守率分析</td>
+      <td style="text-align: center;" class="cross">−</td>
+      <td style="text-align: center;" class="cross">−</td>
+      <td style="text-align: center;" class="check">○</td>
+    </tr>
+    <tr>
+      <td>利益率分析</td>
+      <td style="text-align: center;" class="cross">−</td>
+      <td style="text-align: center;" class="cross">−</td>
+      <td style="text-align: center;" class="check">○</td>
+    </tr>
+    <tr>
+      <td colspan="4" style="background: #f9fafb; font-weight: bold;">サポート</td>
+    </tr>
+    <tr>
+      <td>メールサポート</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+    </tr>
+    <tr>
+      <td>電話サポート</td>
+      <td style="text-align: center;" class="cross">−</td>
+      <td style="text-align: center;" class="check">○</td>
+      <td style="text-align: center;" class="check">○</td>
+    </tr>
+    <tr>
+      <td>優先サポート</td>
+      <td style="text-align: center;" class="cross">−</td>
+      <td style="text-align: center;" class="cross">−</td>
+      <td style="text-align: center;" class="check">○</td>
+    </tr>
+    <tr>
+      <td>導入サポート</td>
+      <td style="text-align: center;">基本</td>
+      <td style="text-align: center;">標準</td>
+      <td style="text-align: center;">専任担当</td>
+    </tr>
+  </table>
+
+  <h2>3. お支払いについて</h2>
+  
+  <div class="note-box">
+    <h3 style="margin-top: 0;">お支払い方法</h3>
+    <ul style="margin: 15px 0 0 25px;">
+      <li>クレジットカード（VISA、Mastercard、JCB、American Express）</li>
+      <li>銀行振込（請求書払い）</li>
+    </ul>
+    
+    <h3>契約期間</h3>
+    <ul style="margin: 15px 0 0 25px;">
+      <li>月額プラン：1ヶ月単位（いつでも解約可能）</li>
+      <li>年額プラン：12ヶ月一括（10%割引）</li>
+    </ul>
+  </div>
+
+  <h2>4. 年額プラン割引</h2>
+  
+  <table>
+    <tr>
+      <th></th>
+      <th class="plan-header plan-lite">ライト</th>
+      <th class="plan-header plan-standard">スタンダード</th>
+      <th class="plan-header plan-pro">プロ</th>
+    </tr>
+    <tr>
+      <td>月額料金</td>
+      <td style="text-align: center;">¥2,000/月</td>
+      <td style="text-align: center;">¥12,000/月</td>
+      <td style="text-align: center;">¥39,800/月</td>
+    </tr>
+    <tr>
+      <td>年額料金（10%OFF）</td>
+      <td style="text-align: center;"><strong>¥21,600/年</strong><br><span class="price-note">（¥1,800/月相当）</span></td>
+      <td style="text-align: center;"><strong>¥129,600/年</strong><br><span class="price-note">（¥10,800/月相当）</span></td>
+      <td style="text-align: center;"><strong>¥429,840/年</strong><br><span class="price-note">（¥35,820/月相当）</span></td>
+    </tr>
+    <tr>
+      <td>年間お得額</td>
+      <td style="text-align: center; color: #10b981; font-weight: bold;">¥2,400お得</td>
+      <td style="text-align: center; color: #10b981; font-weight: bold;">¥14,400お得</td>
+      <td style="text-align: center; color: #10b981; font-weight: bold;">¥47,760お得</td>
+    </tr>
+  </table>
+
+  <h2>5. よくあるご質問</h2>
+
+  <h3>Q. 途中でプラン変更はできますか？</h3>
+  <p>はい、いつでもプラン変更が可能です。アップグレードは即時適用、ダウングレードは次回請求日から適用されます。</p>
+
+  <h3>Q. 初期費用はかかりますか？</h3>
+  <p>システム導入費用50,000円（税別）がかかります。</p>
+
+  <h3>Q. 解約に違約金はありますか？</h3>
+  <p>月額プランの場合、違約金はありません。年額プランの場合、途中解約時の返金はございません。</p>
+
+  <h3>Q. 無料トライアルはありますか？</h3>
+  <p>はい、14日間の無料トライアルをご用意しています。お気軽にお試しください。</p>
+
+  <div class="footer">
+    <p>技工指示書自動化システム</p>
+    <p>開発・運営：ナチュラルアート</p>
+    <p style="margin-top: 10px;">お問い合わせ：info@example.com</p>
+  </div>
+</body>
+</html>

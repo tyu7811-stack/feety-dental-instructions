@@ -1,0 +1,30 @@
+﻿# Dependencies & VCS
+node_modules/
+.git/
+
+# Next.js / bundler output
+.next/
+out/
+dist/
+build/
+
+# Caches
+.turbo/
+.cache/
+.parcel-cache/
+.eslintcache
+*.tsbuildinfo
+
+# Logs & test artifacts
+*.log
+logs/
+coverage/
+.nyc_output/
+
+# Deploy / generated
+.vercel/
+storybook-static/
+
+# OS
+.DS_Store
+Thumbs.db

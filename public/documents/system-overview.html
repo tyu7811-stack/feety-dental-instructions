@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>システム概要資料 - 技工指示書自動化システム</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      line-height: 1.8;
+      color: #1a1a1a;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .header { 
+      text-align: center;
+      border-bottom: 3px solid #2563eb;
+      padding-bottom: 30px;
+      margin-bottom: 40px;
+    }
+    .header h1 { 
+      font-size: 28px;
+      color: #2563eb;
+      margin-bottom: 10px;
+    }
+    .header p { color: #666; font-size: 14px; }
+    h2 { 
+      font-size: 20px;
+      color: #1e3a5f;
+      margin: 40px 0 20px;
+      padding-left: 15px;
+      border-left: 4px solid #2563eb;
+    }
+    h3 { 
+      font-size: 16px;
+      color: #333;
+      margin: 25px 0 15px;
+    }
+    p { margin-bottom: 15px; }
+    ul { margin: 15px 0 15px 25px; }
+    li { margin-bottom: 8px; }
+    .feature-box {
+      background: #f0f7ff;
+      border: 1px solid #c5ddf8;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .feature-box h4 {
+      color: #2563eb;
+      margin-bottom: 10px;
+    }
+    .highlight {
+      background: #fff7e6;
+      border-left: 4px solid #f59e0b;
+      padding: 15px 20px;
+      margin: 20px 0;
+    }
+    .two-col {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .two-col > div {
+      flex: 1;
+      min-width: 280px;
+    }
+    .screenshot {
+      background: #e5e7eb;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 40px;
+      text-align: center;
+      color: #666;
+      margin: 20px 0;
+    }
+    .footer {
+      margin-top: 60px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+    }
+    @media print {
+      body { padding: 20px; }
+      .header { page-break-after: avoid; }
+      h2 { page-break-after: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>技工指示書自動化システム</h1>
+    <p>システム概要資料</p>
+    <p style="margin-top: 10px; font-size: 12px;">発行日: 2026年3月</p>
+  </div>
+
+  <h2>1. システム概要</h2>
+  <p>
+    技工指示書自動化システムは、歯科医院と歯科技工所間の技工指示書のやり取りを
+    デジタル化し、業務効率を大幅に向上させるクラウドサービスです。
+  </p>
+  <p>
+    従来の紙ベースの運用から脱却し、指示書の作成・送信・管理をすべてオンラインで
+    完結できます。
+  </p>
+
+  <h2>2. 導入メリット</h2>
+  
+  <div class="two-col">
+    <div class="feature-box">
+      <h4>歯科医院側のメリット</h4>
+      <ul>
+        <li>技工指示書の作成時間を大幅短縮</li>
+        <li>歯式図への直感的な入力</li>
+        <li>過去の指示書を簡単検索</li>
+        <li>ペーパーレスでコスト削減</li>
+        <li>進捗状況をリアルタイム確認</li>
+      </ul>
+    </div>
+    <div class="feature-box">
+      <h4>歯科技工所側のメリット</h4>
+      <ul>
+        <li>受注から納品まで一元管理</li>
+        <li>納品書・請求書の自動生成</li>
+        <li>提携医院の一括管理</li>
+        <li>売上・案件の高度な分析</li>
+        <li>締め処理の効率化</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="highlight">
+    <strong>導入効果の例</strong><br>
+    技工指示書作成時間：平均15分 → 3分（80%削減）<br>
+    月間のペーパーコスト：約5,000円 → 0円
+  </div>
+
+  <h2>3. 主要機能</h2>
+
+  <h3>3.1 技工指示書作成（歯科医院向け）</h3>
+  <ul>
+    <li>歯式図による直感的な部位選択</li>
+    <li>技工物種類のワンクリック選択</li>
+    <li>色調・金属種類の指定</li>
+    <li>歯式図へのペン書き込み機能</li>
+    <li>納品希望日時の指定（AM/PM）</li>
+  </ul>
+
+  <div class="screenshot">
+    [ 技工指示書作成画面イメージ ]
+  </div>
+
+  <h3>3.2 案件管理（歯科技工所向け）</h3>
+  <ul>
+    <li>受注案件の一覧表示・ステータス管理</li>
+    <li>製作中・完成・納品済みの進捗管理</li>
+    <li>一括ステータス更新</li>
+    <li>検索・フィルタリング機能</li>
+  </ul>
+
+  <h3>3.3 書類管理</h3>
+  <ul>
+    <li>納品書の自動生成</li>
+    <li>請求書の自動生成</li>
+    <li>月次締め処理</li>
+    <li>PDF出力・印刷対応</li>
+  </ul>
+
+  <h3>3.4 高度な分析（スタンダード以上）</h3>
+  <ul>
+    <li>月別売上推移グラフ</li>
+    <li>技工物種類別比率</li>
+    <li>医院別売上ランキング</li>
+    <li>納期遵守率分析（プロ版）</li>
+    <li>利益率分析（プロ版）</li>
+  </ul>
+
+  <h2>4. システム構成</h2>
+  <p>
+    本システムはクラウドベースのWebアプリケーションです。
+    特別なソフトウェアのインストールは不要で、Webブラウザからアクセスできます。
+  </p>
+  <ul>
+    <li>対応ブラウザ：Chrome、Safari、Edge、Firefox（最新版推奨）</li>
+    <li>対応デバイス：PC、タブレット、スマートフォン</li>
+    <li>データ保管：セキュアなクラウドサーバー</li>
+    <li>セキュリティ：SSL暗号化通信、定期バックアップ</li>
+  </ul>
+
+  <h2>5. 導入の流れ</h2>
+  <ol style="margin: 15px 0 15px 25px;">
+    <li style="margin-bottom: 15px;">
+      <strong>お問い合わせ・ヒアリング</strong><br>
+      現在の業務フローをお伺いし、最適なプランをご提案
+    </li>
+    <li style="margin-bottom: 15px;">
+      <strong>アカウント発行</strong><br>
+      お申し込み後、最短即日でアカウント発行
+    </li>
+    <li style="margin-bottom: 15px;">
+      <strong>初期設定・導入サポート</strong><br>
+      提携医院の登録、金額マスタの設定をサポート
+    </li>
+    <li style="margin-bottom: 15px;">
+      <strong>運用開始</strong><br>
+      操作マニュアル・サポート体制完備で安心スタート
+    </li>
+  </ol>
+
+  <div class="footer">
+    <p>技工指示書自動化システム</p>
+    <p>開発・運営：ナチュラルアート</p>
+    <p style="margin-top: 10px;">お問い合わせ：info@example.com</p>
+  </div>
+</body>
+</html>
