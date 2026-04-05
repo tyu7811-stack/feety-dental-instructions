@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react"
 import Link from "next/link"
-import { useSearchParams, useRouter } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { Users, ClipboardList, Truck, Clock, ChevronRight, Package, Loader2 } from "lucide-react"
 
@@ -71,7 +71,6 @@ export default function LabDashboard() {
 }
 
 function LabDashboardContent() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const isDemo = searchParams.get("demo") === "true"
   const isTestOnly = searchParams.get("test") === "true"
@@ -84,9 +83,12 @@ function LabDashboardContent() {
   const [lab, setLab] = useState<Lab | null>(null)
   const [clinics, setClinics] = useState<Clinic[]>([])
   const [cases, setCases] = useState<Case[]>([])
+  /** ミドルウェアは通過したがクライアント getUser が遅延／未取得のとき（/login へ自動遷移しない） */
+  const [clientAuthWarning, setClientAuthWarning] = useState<string | null>(null)
 
   useEffect(() => {
     async function loadData() {
+      setClientAuthWarning(null)
       // テストモードの場合はデモデータを使用
       if (isTestMode) {
         setLab(demoLab)
@@ -97,15 +99,23 @@ function LabDashboardContent() {
       }
 
       const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
+      let user = (await supabase.auth.getUser()).data.user ?? null
+      if (!user) {
+        for (let i = 0; i < 5; i++) {
+          await new Promise((r) => setTimeout(r, 150))
+          user = (await supabase.auth.getUser()).data.user ?? null
+          if (user) break
+        }
+      }
 
       if (!user) {
-        if (process.env.NODE_ENV === "development") {
-          console.warn(
-            "[lab/dashboard] client getUser() empty; redirecting to /login"
-          )
-        }
-        router.replace("/login")
+        console.warn(
+          "[lab/dashboard] クライアントで getUser() が空のまま（ミドルウェアはセッションありで通過している可能性）。/login へは送らず画面に案内を表示します。"
+        )
+        setClientAuthWarning(
+          "ブラウザ側でセッションをまだ読み取れません。Cookie の同期が遅れていることがあります。再読み込みを試すか、問題が続く場合はログインし直してください。"
+        )
+        setLoading(false)
         return
       }
 
@@ -150,12 +160,40 @@ function LabDashboardContent() {
     }
 
     loadData()
-  }, [isTestMode, router])
+  }, [isTestMode])
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  if (clientAuthWarning) {
+    return (
+      <div className="mx-auto max-w-lg space-y-4 rounded-xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-950">
+        <p className="font-semibold">セッションの読み込み</p>
+        <p>{clientAuthWarning}</p>
+        <p className="text-xs text-amber-900/80">
+          以前の版ではここで自動的に /login に戻していました。ミドルウェアで認証済みでも、クライアントの
+          getUser() が一瞬遅れるとログイン画面に戻る現象の原因になっていました。
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="button"
+            className="rounded-lg bg-amber-800 px-4 py-2 text-sm font-medium text-white hover:bg-amber-900"
+            onClick={() => window.location.reload()}
+          >
+            ページを再読み込み
+          </button>
+          <Link
+            href="/login"
+            className="inline-flex items-center rounded-lg border border-amber-800 px-4 py-2 text-sm font-medium text-amber-900 hover:bg-amber-100"
+          >
+            ログインへ
+          </Link>
+        </div>
       </div>
     )
   }
