@@ -1,14 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { FlaskConical, Stethoscope, ArrowRight, Eye, EyeOff, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { createClient } from "@/lib/supabase/client"
 import Link from "next/link"
 
 export default function LoginPage() {
-  const router = useRouter()
   const supabase = createClient()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -69,8 +67,9 @@ export default function LoginPage() {
         (data.user.user_metadata?.role as string | undefined) ??
         (data.user.user_metadata?.user_type as string | undefined)
 
+      let destination = "/lab/dashboard"
       if (registeredRole === "admin") {
-        router.push("/admin")
+        destination = "/admin"
       } else if (registeredRole === "lab") {
         if (selectedRole === "clinic") {
           setError(
@@ -80,7 +79,7 @@ export default function LoginPage() {
           setIsLoading(false)
           return
         }
-        router.push("/lab/dashboard")
+        destination = "/lab/dashboard"
       } else if (registeredRole === "clinic") {
         if (selectedRole === "lab") {
           setError(
@@ -90,14 +89,24 @@ export default function LoginPage() {
           setIsLoading(false)
           return
         }
-        router.push("/clinic/dashboard")
+        destination = "/clinic/dashboard"
       } else {
-        router.push(
+        destination =
           selectedRole === "lab" ? "/lab/dashboard" : "/clinic/dashboard"
-        )
       }
-      // セッションCookieをサーバー／ミドルウェアに即反映（次のLink遷移で保護ルートが拒否されないようにする）
-      router.refresh()
+
+      const { data: sessionData, error: sessionError } =
+        await supabase.auth.getSession()
+      if (sessionError && process.env.NODE_ENV === "development") {
+        console.warn("[login] getSession after signIn:", sessionError.message)
+      }
+      if (!sessionData.session && process.env.NODE_ENV === "development") {
+        console.warn("[login] no session after signIn; check Supabase cookies")
+      }
+
+      // フルページ遷移で Cookie を確実に付けたリクエストにする（middleware とのループ防止）
+      window.location.assign(destination)
+      return
     } catch {
       setError("予期せぬエラーが発生しました")
       setIsLoading(false)

@@ -1,6 +1,45 @@
 import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
+import type { User } from "@supabase/supabase-js"
 import { getSupabaseEnv, logSupabaseUrlIfDevServer } from "@/lib/supabase"
+
+/**
+ * getUser() でセッション更新した際に付く Set-Cookie を、
+ * NextResponse.redirect() など別インスタンスへ引き継がないと、
+ * 次リクエストで未ログイン扱いになり /login ↔ /lab でループする。
+ */
+function copyCookiesFromResponse(
+  source: NextResponse,
+  target: NextResponse
+): NextResponse {
+  for (const c of source.cookies.getAll()) {
+    target.cookies.set(c)
+  }
+  return target
+}
+
+function redirectPreservingAuthCookies(
+  request: NextRequest,
+  supabaseResponse: NextResponse,
+  pathname: string,
+  search?: string
+): NextResponse {
+  const url = request.nextUrl.clone()
+  url.pathname = pathname
+  if (search !== undefined) url.search = search
+  const redirect = NextResponse.redirect(url)
+  return copyCookiesFromResponse(supabaseResponse, redirect)
+}
+
+function postLoginPathForUser(user: User): string {
+  const role =
+    (user.user_metadata?.role as string | undefined) ??
+    (user.user_metadata?.user_type as string | undefined) ??
+    (user.app_metadata?.role as string | undefined)
+  if (role === "admin") return "/admin"
+  if (role === "clinic") return "/clinic/dashboard"
+  return "/lab/dashboard"
+}
 
 export async function updateSession(request: NextRequest) {
   logSupabaseUrlIfDevServer()
@@ -10,36 +49,44 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
-  const supabase = createServerClient(
-    url,
-    anonKey,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          )
-          supabaseResponse = NextResponse.next({
-            request,
-          })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
-        },
+  const supabase = createServerClient(url, anonKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll()
       },
-    }
-  )
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          request.cookies.set({
+            name,
+            value,
+            ...options,
+          })
+        })
+        supabaseResponse = NextResponse.next({
+          request,
+        })
+        cookiesToSet.forEach(({ name, value, options }) => {
+          supabaseResponse.cookies.set(name, value, options)
+        })
+      },
+    },
+  })
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user: User | null = null
+  try {
+    const { data, error } = await supabase.auth.getUser()
+    if (error && process.env.NODE_ENV === "development") {
+      console.warn("[middleware] auth.getUser:", error.message)
+    }
+    user = data.user ?? null
+  } catch (e) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn("[middleware] auth.getUser threw:", e)
+    }
+  }
 
   const pathname = request.nextUrl.pathname
 
-  // 認証不要ページ（ホワイトリスト）。先頭が "/" だけのルールは全パスにマッチするため別扱い。
   const publicPrefixes = [
     "/login",
     "/debug-test-entry",
@@ -55,43 +102,24 @@ export async function updateSession(request: NextRequest) {
     pathname === "/" ||
     publicPrefixes.some((p) => pathname === p || pathname.startsWith(`${p}/`))
 
-  // ログイン済みはログイン画面からアプリへ（公開ページより先に判定）
   if (user && (pathname === "/login" || pathname === "/auth/login")) {
-    const redirectUrl = request.nextUrl.clone()
-    const userType =
-      user.user_metadata?.user_type || user.user_metadata?.role
-    if (userType === "lab") {
-      redirectUrl.pathname = "/lab/dashboard"
-    } else if (userType === "clinic") {
-      redirectUrl.pathname = "/clinic/dashboard"
-    } else {
-      redirectUrl.pathname = "/lab/dashboard"
-    }
-    return NextResponse.redirect(redirectUrl)
+    const dest = postLoginPathForUser(user)
+    return redirectPreservingAuthCookies(request, supabaseResponse, dest)
   }
 
-  // 認証不要ページへのアクセスはそのまま許可
   if (isPublicPage) {
     return supabaseResponse
   }
 
-  // 保護されたルートへのアクセス制御
   const protectedPaths = ["/lab", "/clinic", "/admin", "/account"]
   const isProtectedPath = protectedPaths.some((path) =>
     pathname.startsWith(path)
   )
 
-  // デモ（本番でも未ログイン可）: 医院の新規指示書 / 技工所ダッシュ・案件・提携医院（デモ用画面のみ）
   const demoQuery = request.nextUrl.searchParams.get("demo") === "true"
   const isClinicNewOrderDemo =
     pathname === "/clinic/orders/new" && demoQuery
-  const isLabDemoPublic =
-    demoQuery &&
-    pathname.startsWith("/lab/") &&
-    (pathname === "/lab/dashboard" ||
-      pathname === "/lab/cases" ||
-      pathname.startsWith("/lab/cases/") ||
-      pathname === "/lab/clinics")
+  const isLabDemoPublic = demoQuery && pathname === "/lab/dashboard"
   const allowDevPreview = process.env.NODE_ENV !== "production"
   const isDemoMode =
     isClinicNewOrderDemo ||
@@ -100,18 +128,23 @@ export async function updateSession(request: NextRequest) {
   const isTestMode =
     allowDevPreview && request.nextUrl.searchParams.get("test") === "true"
 
-  // 保護ページへのアクセス制御
   if (isProtectedPath && !user && !isDemoMode && !isTestMode) {
-    const url = request.nextUrl.clone()
-    url.pathname = "/login"
-    return NextResponse.redirect(url)
+    if (process.env.NODE_ENV === "development") {
+      const names = request.cookies.getAll().map((c) => c.name)
+      console.warn("[middleware] protected route without session", {
+        pathname,
+        cookieNames: names,
+      })
+    }
+    return redirectPreservingAuthCookies(
+      request,
+      supabaseResponse,
+      "/login"
+    )
   }
 
-  // 旧パス /auth/login は /login へ
   if (pathname === "/auth/login") {
-    const url = request.nextUrl.clone()
-    url.pathname = "/login"
-    return NextResponse.redirect(url)
+    return redirectPreservingAuthCookies(request, supabaseResponse, "/login")
   }
 
   return supabaseResponse

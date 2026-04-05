@@ -100,7 +100,12 @@ function LabDashboardContent() {
       const { data: { user } } = await supabase.auth.getUser()
 
       if (!user) {
-        router.push("/")
+        if (process.env.NODE_ENV === "development") {
+          console.warn(
+            "[lab/dashboard] client getUser() empty; redirecting to /login"
+          )
+        }
+        router.replace("/login")
         return
       }
 
