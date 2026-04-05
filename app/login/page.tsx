@@ -62,16 +62,39 @@ export default function LoginPage() {
         .from("profiles")
         .select("role")
         .eq("id", data.user.id)
-        .single()
+        .maybeSingle()
 
-      const userRole = profile?.role || data.user.user_metadata?.role
+      const registeredRole =
+        profile?.role ??
+        (data.user.user_metadata?.role as string | undefined) ??
+        (data.user.user_metadata?.user_type as string | undefined)
 
-      if (userRole === "admin") {
+      if (registeredRole === "admin") {
         router.push("/admin")
-      } else if (userRole === "lab" || selectedRole === "lab") {
+      } else if (registeredRole === "lab") {
+        if (selectedRole === "clinic") {
+          setError(
+            "このアカウントは技工所です。ログイン画面で「技工所」を選んでください。"
+          )
+          await supabase.auth.signOut()
+          setIsLoading(false)
+          return
+        }
         router.push("/lab/dashboard")
-      } else {
+      } else if (registeredRole === "clinic") {
+        if (selectedRole === "lab") {
+          setError(
+            "このアカウントは歯科医院です。ログイン画面で「歯科医院」を選んでください。"
+          )
+          await supabase.auth.signOut()
+          setIsLoading(false)
+          return
+        }
         router.push("/clinic/dashboard")
+      } else {
+        router.push(
+          selectedRole === "lab" ? "/lab/dashboard" : "/clinic/dashboard"
+        )
       }
       // セッションCookieをサーバー／ミドルウェアに即反映（次のLink遷移で保護ルートが拒否されないようにする）
       router.refresh()
@@ -279,22 +302,29 @@ export default function LoginPage() {
             </Link>
           </p>
 
-          <div className="mt-6 rounded-lg border border-border bg-card p-4">
+          <div className="mt-6 rounded-lg border border-border bg-card p-4 space-y-3">
             <p className="text-sm font-semibold text-foreground">
               ログインなしで画面確認
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              デモモードで「新規 技工指示書」を表示します（送信は失敗する場合があります）。
+            <p className="text-xs text-muted-foreground">
+              歯科医院向けは新規指示書、技工所向けはダッシュボードのデモです（送信などは失敗する場合があります）。
             </p>
-            <div className="mt-3">
-              <Link
-                href="/clinic/orders/new?demo=true"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1a6cf0] px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-[#1559cc] active:scale-[0.98]"
-              >
-                技工指示書システム（デモ）を見る
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
+            <Link
+              href="/clinic/orders/new?demo=true"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border-2 border-border bg-background px-4 py-3 text-sm font-semibold text-foreground transition-all hover:bg-accent active:scale-[0.98]"
+            >
+              <Stethoscope className="h-4 w-4" />
+              歯科医院：新規技工指示書（デモ）
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/lab/dashboard?demo=true"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1a6cf0] px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-[#1559cc] active:scale-[0.98]"
+            >
+              <FlaskConical className="h-4 w-4" />
+              技工所：ダッシュボード（デモ）
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
 
           <p className="mt-8 text-center text-xs text-muted-foreground">

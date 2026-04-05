@@ -81,13 +81,22 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith(path)
   )
 
-  // デモ: ログイン画面の「技工指示書（デモ）」は本番でも /clinic/orders/new?demo=true のみ未ログイン可
+  // デモ（本番でも未ログイン可）: 医院の新規指示書 / 技工所ダッシュ・案件・提携医院（デモ用画面のみ）
   const demoQuery = request.nextUrl.searchParams.get("demo") === "true"
   const isClinicNewOrderDemo =
     pathname === "/clinic/orders/new" && demoQuery
+  const isLabDemoPublic =
+    demoQuery &&
+    pathname.startsWith("/lab/") &&
+    (pathname === "/lab/dashboard" ||
+      pathname === "/lab/cases" ||
+      pathname.startsWith("/lab/cases/") ||
+      pathname === "/lab/clinics")
   const allowDevPreview = process.env.NODE_ENV !== "production"
   const isDemoMode =
-    isClinicNewOrderDemo || (allowDevPreview && demoQuery)
+    isClinicNewOrderDemo ||
+    isLabDemoPublic ||
+    (allowDevPreview && demoQuery)
   const isTestMode =
     allowDevPreview && request.nextUrl.searchParams.get("test") === "true"
 

@@ -139,15 +139,24 @@ export default function HomePage() {
               デモで画面を確認できます
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-              アカウントがなくても、新規技工指示書の画面をデモモードで開けます。
+              アカウントがなくても、医院向け・技工所向けの画面をデモで開けます。
             </p>
-            <Link
-              href="/clinic/orders/new?demo=true"
-              className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[#1a6cf0] px-6 py-3.5 text-base font-semibold text-white transition-colors hover:bg-[#1559cc]"
-            >
-              デモを見る
-              <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link
+                href="/clinic/orders/new?demo=true"
+                className="inline-flex items-center gap-2 rounded-xl border-2 border-border bg-card px-6 py-3.5 text-base font-semibold text-foreground transition-colors hover:bg-accent"
+              >
+                医院：新規指示書（デモ）
+                <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+              <Link
+                href="/lab/dashboard?demo=true"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#1a6cf0] px-6 py-3.5 text-base font-semibold text-white transition-colors hover:bg-[#1559cc]"
+              >
+                技工所：ダッシュボード（デモ）
+                <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+            </div>
           </div>
         </section>
       </main>

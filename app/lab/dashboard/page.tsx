@@ -66,8 +66,10 @@ export default function LabDashboard() {
 function LabDashboardContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const isTestMode = searchParams.get("test") === "true" || searchParams.get("demo") === "true"
-  const queryParam = isTestMode ? "?test=true" : ""
+  const isDemo = searchParams.get("demo") === "true"
+  const isTestOnly = searchParams.get("test") === "true"
+  const isTestMode = isDemo || isTestOnly
+  const queryParam = isDemo ? "?demo=true" : isTestOnly ? "?test=true" : ""
 
   const [loading, setLoading] = useState(true)
   const [lab, setLab] = useState<Lab | null>(null)
@@ -156,7 +158,11 @@ function LabDashboardContent() {
         <h1 className="text-2xl font-bold tracking-tight">ダッシュボード</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {lab?.name || "技工所"} - 案件状況の概要
-          {isTestMode && <span className="ml-2 text-red-600 font-semibold">[テストモード]</span>}
+          {isTestMode && (
+            <span className="ml-2 font-semibold text-amber-700">
+              {isDemo ? "[デモ]" : "[テストモード]"}
+            </span>
+          )}
         </p>
       </div>
 
