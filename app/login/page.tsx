@@ -1,9 +1,11 @@
 "use client"
 
 import { useState } from "react"
+import type { Session } from "@supabase/supabase-js"
 import { FlaskConical, Stethoscope, ArrowRight, Eye, EyeOff, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { createClient } from "@/lib/supabase/client"
+import { waitUntilSupabaseAuthCookiesVisible } from "@/lib/supabase/wait-auth-cookies"
 import Link from "next/link"
 
 export default function LoginPage() {
@@ -95,16 +97,55 @@ export default function LoginPage() {
           selectedRole === "lab" ? "/lab/dashboard" : "/clinic/dashboard"
       }
 
-      const { data: sessionData, error: sessionError } =
-        await supabase.auth.getSession()
-      if (sessionError && process.env.NODE_ENV === "development") {
-        console.warn("[login] getSession after signIn:", sessionError.message)
-      }
-      if (!sessionData.session && process.env.NODE_ENV === "development") {
-        console.warn("[login] no session after signIn; check Supabase cookies")
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ""
+
+      await supabase.auth.getSession()
+
+      const sessionDeadline = Date.now() + 8000
+      let session: Session | null = null
+      while (Date.now() < sessionDeadline) {
+        const { data: s, error: sessionError } =
+          await supabase.auth.getSession()
+        if (sessionError) {
+          if (process.env.NODE_ENV === "development") {
+            console.warn("[login] getSession while waiting:", sessionError.message)
+          }
+        } else if (s.session) {
+          session = s.session
+          break
+        }
+        await new Promise((r) => setTimeout(r, 100))
       }
 
-      // フルページ遷移で Cookie を確実に付けたリクエストにする（middleware とのループ防止）
+      if (!session) {
+        setError(
+          "セッションを確立できませんでした。Cookie がブロックされていないか確認し、再度お試しください。"
+        )
+        setIsLoading(false)
+        return
+      }
+
+      const cookieWait = await waitUntilSupabaseAuthCookiesVisible({
+        supabaseUrl,
+        maxMs: 8000,
+        pollMs: 60,
+      })
+      if (!cookieWait.ok) {
+        setError(
+          "ブラウザにセッションを保存できませんでした。Cookie を許可してから再度ログインしてください。"
+        )
+        setIsLoading(false)
+        return
+      }
+
+      const { data: beforeNavigate } = await supabase.auth.getSession()
+      if (!beforeNavigate.session) {
+        setError("セッションの確認に失敗しました。再度お試しください。")
+        setIsLoading(false)
+        return
+      }
+
+      // router.push ではなくフルリロードし、次リクエストで Cookie を必ず送る
       window.location.assign(destination)
       return
     } catch {

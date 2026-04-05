@@ -1,6 +1,10 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { getSupabaseEnv, logSupabaseUrlIfDevServer } from "@/lib/supabase"
+import { getSupabaseCreateClientAuthOptions } from "@/lib/supabase/auth-cookie-contract"
+import { supabaseAuthCookieOptionsForServer } from "@/lib/supabase/cookie-options"
+
+/** Cookie 属性・storageKey は middleware / auth callback と同一（`cookie-options.ts`） */
 
 export async function createClient() {
   logSupabaseUrlIfDevServer()
@@ -11,6 +15,8 @@ export async function createClient() {
     url,
     anonKey,
     {
+      auth: getSupabaseCreateClientAuthOptions(),
+      cookieOptions: supabaseAuthCookieOptionsForServer(url),
       cookies: {
         getAll() {
           return cookieStore.getAll()
@@ -20,9 +26,11 @@ export async function createClient() {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
             )
-          } catch {
-            // The "setAll" method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing user sessions.
+          } catch (e) {
+            // Server Component など set が禁止なコンテキストでは無視（セッション更新は middleware が担当）
+            if (process.env.NODE_ENV === "development") {
+              console.warn("[supabase/server] setAll skipped:", e)
+            }
           }
         },
       },

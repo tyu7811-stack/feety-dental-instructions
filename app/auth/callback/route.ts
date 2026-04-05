@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { getSupabaseEnv } from "@/lib/supabase"
+import { getSupabaseCreateClientAuthOptions } from "@/lib/supabase/auth-cookie-contract"
+import { supabaseAuthCookieOptionsForServer } from "@/lib/supabase/cookie-options"
 import {
   completeSignupProvisioning,
   dashboardPathForUser,
@@ -19,6 +21,8 @@ export async function GET(request: Request) {
   const { url, anonKey } = getSupabaseEnv()
 
   const supabase = createServerClient(url, anonKey, {
+    auth: getSupabaseCreateClientAuthOptions(),
+    cookieOptions: supabaseAuthCookieOptionsForServer(url),
     cookies: {
       getAll() {
         return cookieStore.getAll()

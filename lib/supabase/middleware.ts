@@ -2,6 +2,16 @@ import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 import type { User } from "@supabase/supabase-js"
 import { getSupabaseEnv, logSupabaseUrlIfDevServer } from "@/lib/supabase"
+import {
+  getPublicAuthStorageKey,
+  getSupabaseCreateClientAuthOptions,
+} from "@/lib/supabase/auth-cookie-contract"
+import {
+  buildCookieAbsenceDiagnostics,
+  isSupabaseAuthSessionCookieName,
+  parseCookieNamesFromHeader,
+  supabaseAuthCookieOptionsForServer,
+} from "@/lib/supabase/cookie-options"
 
 /**
  * getUser() でセッション更新した際に付く Set-Cookie を、
@@ -24,11 +34,12 @@ function redirectPreservingAuthCookies(
   pathname: string,
   search: string | undefined,
   logReason: string,
-  logDetails: Record<string, unknown>
+  logDetails: Record<string, unknown>,
+  authStorageKey: string
 ): NextResponse {
   const cookieNames = request.cookies.getAll().map((c) => c.name)
-  const hasSbCookie = cookieNames.some(
-    (n) => n.startsWith("sb-") && n.includes("auth")
+  const hasSbCookie = cookieNames.some((n) =>
+    isSupabaseAuthSessionCookieName(n, authStorageKey)
   )
   console.log("[middleware][REDIRECT]", {
     reason: logReason,
@@ -62,49 +73,7 @@ function postLoginPathForUser(user: User): string {
 export async function updateSession(request: NextRequest) {
   logSupabaseUrlIfDevServer()
   const { url, anonKey } = getSupabaseEnv()
-
-  let supabaseResponse = NextResponse.next({
-    request,
-  })
-
-  const supabase = createServerClient(url, anonKey, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll()
-      },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) => {
-          request.cookies.set({
-            name,
-            value,
-            ...options,
-          })
-        })
-        supabaseResponse = NextResponse.next({
-          request,
-        })
-        cookiesToSet.forEach(({ name, value, options }) => {
-          supabaseResponse.cookies.set(name, value, options)
-        })
-      },
-    },
-  })
-
-  let user: User | null = null
-  let getUserErrorMessage: string | null = null
-  let getUserThrown: string | null = null
-  try {
-    const { data, error } = await supabase.auth.getUser()
-    if (error) {
-      getUserErrorMessage = error.message
-      console.warn("[middleware] auth.getUser error:", error.message)
-    }
-    user = data.user ?? null
-  } catch (e) {
-    getUserThrown = e instanceof Error ? e.message : String(e)
-    console.warn("[middleware] auth.getUser threw:", getUserThrown)
-  }
-
+  const authStorageKey = getPublicAuthStorageKey()
   const pathname = request.nextUrl.pathname
 
   const publicPrefixes = [
@@ -122,6 +91,80 @@ export async function updateSession(request: NextRequest) {
     pathname === "/" ||
     publicPrefixes.some((p) => pathname === p || pathname.startsWith(`${p}/`))
 
+  // @supabase/ssr + Next.js App Router: 公式どおり request に name/value のみ、
+  // response 側で options を付与。オブジェクト1引数の request.cookies.set は Edge で期待どおり動かないことがある。
+  let supabaseResponse = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  })
+
+  const supabase = createServerClient(url, anonKey, {
+    auth: getSupabaseCreateClientAuthOptions(),
+    cookieOptions: supabaseAuthCookieOptionsForServer(url),
+    cookies: {
+      getAll() {
+        return request.cookies.getAll()
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value }) => {
+          request.cookies.set(name, value)
+        })
+        supabaseResponse = NextResponse.next({
+          request,
+        })
+        cookiesToSet.forEach(({ name, value, options }) => {
+          supabaseResponse.cookies.set(name, value, options)
+        })
+      },
+    },
+  })
+
+  const rawCookieHeader = request.headers.get("cookie")
+  const namesParsedFromHeader = parseCookieNamesFromHeader(rawCookieHeader)
+  const incomingCookies = request.cookies.getAll()
+  const sbAuthCookies = incomingCookies.filter((c) =>
+    isSupabaseAuthSessionCookieName(c.name, authStorageKey)
+  )
+  const headerHasSessionCookie = namesParsedFromHeader.some((n) =>
+    isSupabaseAuthSessionCookieName(n, authStorageKey)
+  )
+  console.log("[middleware][cookies:before-getUser]", {
+    path: pathname,
+    authStorageKey,
+    cookieCount: incomingCookies.length,
+    cookieNames: incomingCookies.map((c) => c.name),
+    sbAuthCookieCount: sbAuthCookies.length,
+    sbAuthCookieValueLengths: sbAuthCookies.map((c) => c.value?.length ?? 0),
+    cookieHeaderByteLength: rawCookieHeader?.length ?? 0,
+    namesParsedFromCookieHeader: namesParsedFromHeader,
+    headerNameCountVsGetAll:
+      namesParsedFromHeader.length !== incomingCookies.length,
+    headerHasSessionCookieForAuthStorageKey: headerHasSessionCookie,
+  })
+
+  if (sbAuthCookies.length === 0 && !isPublicPage) {
+    console.log(
+      "[middleware][cookies:diagnostics]",
+      buildCookieAbsenceDiagnostics(request, url)
+    )
+  }
+
+  let user: User | null = null
+  let getUserErrorMessage: string | null = null
+  let getUserThrown: string | null = null
+  try {
+    const { data, error } = await supabase.auth.getUser()
+    if (error) {
+      getUserErrorMessage = error.message
+      console.warn("[middleware] auth.getUser error:", error.message)
+    }
+    user = data.user ?? null
+  } catch (e) {
+    getUserThrown = e instanceof Error ? e.message : String(e)
+    console.warn("[middleware] auth.getUser threw:", getUserThrown)
+  }
+
   if (user && (pathname === "/login" || pathname === "/auth/login")) {
     const dest = postLoginPathForUser(user)
     return redirectPreservingAuthCookies(
@@ -138,7 +181,8 @@ export async function updateSession(request: NextRequest) {
           user.user_metadata?.user_type ??
           user.app_metadata?.role ??
           "(none in jwt metadata)",
-      }
+      },
+      authStorageKey
     )
   }
 
@@ -180,7 +224,8 @@ export async function updateSession(request: NextRequest) {
         getUserErrorMessage,
         getUserThrown,
         note: "ミドルウェアの getUser() が user=null。Cookie 未送信・期限切れ・JWT検証失敗のいずれかの可能性。",
-      }
+      },
+      authStorageKey
     )
   }
 
@@ -191,7 +236,8 @@ export async function updateSession(request: NextRequest) {
       "/login",
       undefined,
       "LEGACY_PATH_AUTH_LOGIN_TO_LOGIN",
-      {}
+      {},
+      authStorageKey
     )
   }
 
