@@ -1,7 +1,8 @@
 {
-  "name": "my-project",
+  "name": "feety-lab-instructions",
   "version": "0.1.0",
   "private": true,
+  "description": "Feety 技工指示書 — 歯科医院・技工所向け指示書・案件管理",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
