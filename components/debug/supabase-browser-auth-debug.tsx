@@ -52,6 +52,14 @@ export function SupabaseBrowserAuthDebug() {
         data.session?.user?.id ?? null
       )
     })
+    void supabase.auth.getUser().then(({ data, error }) => {
+      const role =
+        (data.user?.user_metadata?.role as string | undefined) ??
+        (data.user?.user_metadata?.user_type as string | undefined) ??
+        "(unknown)"
+      console.log(`${tag} getUser() error:`, error?.message ?? null)
+      console.log(`${tag} Current User Role (from client JWT):`, role)
+    })
   }, [pathname])
 
   return null
