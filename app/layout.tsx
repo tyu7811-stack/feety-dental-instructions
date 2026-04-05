@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Noto_Sans_JP } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { SupabaseBrowserAuthDebug } from '@/components/debug/supabase-browser-auth-debug'
 import './globals.css'
 
 const notoSansJP = Noto_Sans_JP({
@@ -34,6 +35,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={`${notoSansJP.variable} font-sans antialiased`}>
+        <SupabaseBrowserAuthDebug />
         {children}
         <Analytics />
       </body>

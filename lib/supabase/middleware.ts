@@ -22,8 +22,26 @@ function redirectPreservingAuthCookies(
   request: NextRequest,
   supabaseResponse: NextResponse,
   pathname: string,
-  search?: string
+  search: string | undefined,
+  logReason: string,
+  logDetails: Record<string, unknown>
 ): NextResponse {
+  const cookieNames = request.cookies.getAll().map((c) => c.name)
+  const hasSbCookie = cookieNames.some(
+    (n) => n.startsWith("sb-") && n.includes("auth")
+  )
+  console.log("[middleware][REDIRECT]", {
+    reason: logReason,
+    toPath: pathname,
+    toSearch: search ?? "(unchanged)",
+    fromPath: request.nextUrl.pathname,
+    fromSearch: request.nextUrl.search || "(none)",
+    cookieCount: cookieNames.length,
+    cookieNames,
+    hasSbAuthNamedCookie: hasSbCookie,
+    ...logDetails,
+  })
+
   const url = request.nextUrl.clone()
   url.pathname = pathname
   if (search !== undefined) url.search = search
@@ -73,16 +91,18 @@ export async function updateSession(request: NextRequest) {
   })
 
   let user: User | null = null
+  let getUserErrorMessage: string | null = null
+  let getUserThrown: string | null = null
   try {
     const { data, error } = await supabase.auth.getUser()
-    if (error && process.env.NODE_ENV === "development") {
-      console.warn("[middleware] auth.getUser:", error.message)
+    if (error) {
+      getUserErrorMessage = error.message
+      console.warn("[middleware] auth.getUser error:", error.message)
     }
     user = data.user ?? null
   } catch (e) {
-    if (process.env.NODE_ENV === "development") {
-      console.warn("[middleware] auth.getUser threw:", e)
-    }
+    getUserThrown = e instanceof Error ? e.message : String(e)
+    console.warn("[middleware] auth.getUser threw:", getUserThrown)
   }
 
   const pathname = request.nextUrl.pathname
@@ -104,7 +124,22 @@ export async function updateSession(request: NextRequest) {
 
   if (user && (pathname === "/login" || pathname === "/auth/login")) {
     const dest = postLoginPathForUser(user)
-    return redirectPreservingAuthCookies(request, supabaseResponse, dest)
+    return redirectPreservingAuthCookies(
+      request,
+      supabaseResponse,
+      dest,
+      undefined,
+      "LOGGED_IN_USER_ON_LOGIN_PAGE",
+      {
+        userId: user.id,
+        redirectTarget: dest,
+        roleFromJwt:
+          user.user_metadata?.role ??
+          user.user_metadata?.user_type ??
+          user.app_metadata?.role ??
+          "(none in jwt metadata)",
+      }
+    )
   }
 
   if (isPublicPage) {
@@ -129,22 +164,35 @@ export async function updateSession(request: NextRequest) {
     allowDevPreview && request.nextUrl.searchParams.get("test") === "true"
 
   if (isProtectedPath && !user && !isDemoMode && !isTestMode) {
-    if (process.env.NODE_ENV === "development") {
-      const names = request.cookies.getAll().map((c) => c.name)
-      console.warn("[middleware] protected route without session", {
-        pathname,
-        cookieNames: names,
-      })
-    }
     return redirectPreservingAuthCookies(
       request,
       supabaseResponse,
-      "/login"
+      "/login",
+      undefined,
+      "PROTECTED_ROUTE_BUT_NO_USER",
+      {
+        isProtectedPath,
+        isDemoMode,
+        isTestMode,
+        demoQuery,
+        isClinicNewOrderDemo,
+        isLabDemoPublic,
+        getUserErrorMessage,
+        getUserThrown,
+        note: "ミドルウェアの getUser() が user=null。Cookie 未送信・期限切れ・JWT検証失敗のいずれかの可能性。",
+      }
     )
   }
 
   if (pathname === "/auth/login") {
-    return redirectPreservingAuthCookies(request, supabaseResponse, "/login")
+    return redirectPreservingAuthCookies(
+      request,
+      supabaseResponse,
+      "/login",
+      undefined,
+      "LEGACY_PATH_AUTH_LOGIN_TO_LOGIN",
+      {}
+    )
   }
 
   return supabaseResponse
