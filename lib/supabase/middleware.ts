@@ -49,6 +49,7 @@ export async function updateSession(request: NextRequest) {
     "/legal",
     "/plans",
     "/request-document",
+    "/auth/callback",
   ]
   const isPublicPage =
     pathname === "/" ||
@@ -57,7 +58,8 @@ export async function updateSession(request: NextRequest) {
   // ログイン済みはログイン画面からアプリへ（公開ページより先に判定）
   if (user && (pathname === "/login" || pathname === "/auth/login")) {
     const redirectUrl = request.nextUrl.clone()
-    const userType = user.user_metadata?.user_type
+    const userType =
+      user.user_metadata?.user_type || user.user_metadata?.role
     if (userType === "lab") {
       redirectUrl.pathname = "/lab/dashboard"
     } else if (userType === "clinic") {

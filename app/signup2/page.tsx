@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { FlaskConical, Eye, EyeOff, Loader2 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import Link from "next/link"
+import { completeSignupProvisioning } from "@/lib/auth/complete-signup-profile"
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -23,6 +24,17 @@ export default function RegisterPage() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const q = params.get("error")
+    if (!q) return
+    if (q === "auth_callback") {
+      setError("メール認証リンクが無効か期限切れです。もう一度お試しください。")
+    } else {
+      setError(decodeURIComponent(q))
+    }
+  }, [])
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault()
@@ -79,23 +91,42 @@ export default function RegisterPage() {
     }
 
     try {
-      // Supabase Auth signup
+      const meta = {
+        role: userType,
+        user_type: userType,
+        company_name: companyName.trim(),
+        contact_name: contactName.trim(),
+        display_name: contactName.trim(),
+        phone: phoneNumber.trim(),
+      }
+
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: email.trim(),
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: meta,
         },
       })
 
       if (authError) {
-        // Handle specific error cases
-        if (authError.message.includes("already registered") || 
-            authError.message.includes("User already registered")) {
+        const msg = authError.message.toLowerCase()
+        if (
+          msg.includes("already registered") ||
+          msg.includes("user already registered") ||
+          msg.includes("already been registered") ||
+          msg.includes("already exists")
+        ) {
           setError("このメールアドレスは既に登録されています")
-        } else if (authError.message.includes("Invalid email")) {
+        } else if (
+          authError.message.includes("Invalid email") ||
+          msg.includes("invalid email")
+        ) {
           setError("無効なメールアドレスです")
-        } else if (authError.message.includes("Password")) {
+        } else if (
+          authError.message.includes("Password") ||
+          msg.includes("password")
+        ) {
           setError("パスワードが要件を満たしていません（8文字以上）")
         } else {
           setError(authError.message || "登録に失敗しました")
@@ -110,64 +141,23 @@ export default function RegisterPage() {
         return
       }
 
-      const userId = authData.user.id
+      const session = authData.session
 
-      // Insert into profiles table with all user data
-      const { error: profileError } = await supabase.from("profiles").insert({
-        id: userId,
-        email: email.trim(),
-        role: userType,
-        company_name: companyName.trim(),
-        contact_name: contactName.trim(),
-        phone: phoneNumber.trim(),
-      })
-
-      if (profileError) {
-        // If profile insert fails, show error but don't block
-        console.error("Profile insert error:", profileError)
-      }
-
-      // Also insert into labs or clinics table based on user type
-      if (userType === "lab") {
-        await supabase.from("labs").insert({
-          user_id: userId,
-          name: companyName.trim(),
-          contact_name: contactName.trim(),
-          phone: phoneNumber.trim(),
-        })
-      } else if (userType === "clinic") {
-        const emailNorm = email.trim().toLowerCase()
-        const { data: unlinked } = await supabase
-          .from("clinics")
-          .select("id, email")
-          .is("user_id", null)
-
-        const linked = unlinked?.find(
-          (r) => r.email && r.email.trim().toLowerCase() === emailNorm
+      if (session) {
+        const { error: provError } = await completeSignupProvisioning(
+          supabase,
+          authData.user
         )
-
-        if (linked) {
-          await supabase
-            .from("clinics")
-            .update({
-              user_id: userId,
-              name: companyName.trim(),
-              doctor_name: contactName.trim(),
-              phone: phoneNumber.trim(),
-            })
-            .eq("id", linked.id)
-        } else {
-          await supabase.from("clinics").insert({
-            user_id: userId,
-            name: companyName.trim(),
-            doctor_name: contactName.trim(),
-            phone: phoneNumber.trim(),
-            email: email.trim(),
-          })
+        if (provError) {
+          await supabase.auth.signOut()
+          setError(
+            `登録後のデータ保存に失敗しました。お手数ですが内容をご確認のうえ再度お試しください。（${provError}）`
+          )
+          setLoading(false)
+          return
         }
       }
 
-      // Signup successful - show success message
       setSuccess(true)
       setLoading(false)
     } catch (err) {
@@ -226,7 +216,7 @@ export default function RegisterPage() {
               </div>
               <div>
                 <div className="font-semibold text-white">無料トライアル</div>
-                <div className="text-sm text-white/70">契約不要でお気軽にお試���いただけます</div>
+                <div className="text-sm text-white/70">契約不要でお気軽にお試しいただけます</div>
               </div>
             </div>
           </div>
@@ -405,10 +395,23 @@ export default function RegisterPage() {
                 className="h-4 w-4 rounded border-gray-300"
               />
               <label htmlFor="terms" className="text-sm text-gray-600">
-                利用規約と
-                <a href="/terms" className="text-[#1a6cf0] hover:underline">
-                  プライバシーポリシー
-                </a>
+                <Link
+                  href="/legal/terms"
+                  className="text-[#1a6cf0] hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  利用規約
+                </Link>
+                および
+                <Link
+                  href="/legal/tokushoho"
+                  className="text-[#1a6cf0] hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  特定商取引法に基づく表記
+                </Link>
                 に同意します
               </label>
             </div>
