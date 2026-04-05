@@ -1,13 +1,10 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { ArrowRight, FlaskConical, FileText, Shield, Sparkles } from "lucide-react"
 import {
-  ArrowRight,
-  FlaskConical,
-  Stethoscope,
-  FileText,
-  Shield,
-  Sparkles,
-} from "lucide-react"
+  RolePersonaCards,
+  RolePersonaCompactIntro,
+} from "@/components/marketing/role-persona-marketing"
 
 export const metadata: Metadata = {
   title: "FEETY | 歯科技工指示書クラウド",
@@ -85,6 +82,9 @@ export default function HomePage() {
             <p className="mt-6 max-w-2xl text-lg text-muted-foreground leading-relaxed">
               技工指示書のデジタル化から、案件・納品の管理まで。FEETYは、日々の連携をシンプルにするための公式サイトとサービスです。
             </p>
+            <div className="mt-4">
+              <RolePersonaCompactIntro layout="hero" />
+            </div>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
                 href="/signup2"
@@ -100,29 +100,8 @@ export default function HomePage() {
                 ログイン
               </Link>
             </div>
-            <div className="mt-14 grid gap-4 sm:grid-cols-2">
-              <div className="flex gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#1a6cf0]/10 text-[#1a6cf0]">
-                  <Stethoscope className="h-6 w-6" aria-hidden />
-                </div>
-                <div>
-                  <p className="font-semibold">歯科医院</p>
-                  <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
-                    技工指示書の作成・送信をブラウザから。テンプレートと履歴で負担を軽減します。
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#1a6cf0]/10 text-[#1a6cf0]">
-                  <FlaskConical className="h-6 w-6" aria-hidden />
-                </div>
-                <div>
-                  <p className="font-semibold">技工所</p>
-                  <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
-                    受注・進捗・納品を一箇所で。医院とのやり取りを見失わない運用が可能です。
-                  </p>
-                </div>
-              </div>
+            <div className="mt-14">
+              <RolePersonaCards layout="hero" />
             </div>
           </div>
         </section>

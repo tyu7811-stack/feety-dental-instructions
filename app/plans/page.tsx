@@ -1,8 +1,10 @@
-"use client"
-
 import Link from "next/link"
 import { Check, X, Sparkles, ArrowLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
+import {
+  RolePersonaCards,
+  RolePersonaCompactIntro,
+} from "@/components/marketing/role-persona-marketing"
 
 const plans = [
   {
@@ -104,6 +106,13 @@ export default function PlansPage() {
           <p className="mt-2 text-sm text-amber-600 font-medium">
             ※ ライトプラン・スタンダードプランは、1医院増えるごとに +¥2,000/月
           </p>
+        </div>
+
+        <div className="mb-14 mt-10">
+          <RolePersonaCompactIntro layout="plans" />
+          <div className="mt-10">
+            <RolePersonaCards layout="plans" />
+          </div>
         </div>
 
         {/* Plans Grid */}
