@@ -81,15 +81,15 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith(path)
   )
 
-  // テスト/デモモードは開発時のみ（本番では認証バイパスを無効化）
-  const allowUnauthenticatedPreview =
-    process.env.NODE_ENV !== "production"
+  // デモ: ログイン画面の「技工指示書（デモ）」は本番でも /clinic/orders/new?demo=true のみ未ログイン可
+  const demoQuery = request.nextUrl.searchParams.get("demo") === "true"
+  const isClinicNewOrderDemo =
+    pathname === "/clinic/orders/new" && demoQuery
+  const allowDevPreview = process.env.NODE_ENV !== "production"
   const isDemoMode =
-    allowUnauthenticatedPreview &&
-    request.nextUrl.searchParams.get("demo") === "true"
+    isClinicNewOrderDemo || (allowDevPreview && demoQuery)
   const isTestMode =
-    allowUnauthenticatedPreview &&
-    request.nextUrl.searchParams.get("test") === "true"
+    allowDevPreview && request.nextUrl.searchParams.get("test") === "true"
 
   // 保護ページへのアクセス制御
   if (isProtectedPath && !user && !isDemoMode && !isTestMode) {
