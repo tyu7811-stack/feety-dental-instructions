@@ -115,7 +115,7 @@ export default function HomePage() {
               技工所様向けプラン
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-muted-foreground">
-              有料は税別月額です。詳細・お申し込みは料金ページへ。
+              有料プランは税込・月払いまたは年払い（2か月分相当お得）です。詳細・お申し込みは料金ページへ。
             </p>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {labPlansMarketing.map((p) => (
@@ -135,6 +135,11 @@ export default function HomePage() {
                     {p.priceDisplay}
                     <span className="text-xs font-normal text-muted-foreground">{p.priceNote}</span>
                   </p>
+                  {p.annualBillingLabel ? (
+                    <p className="mt-1.5 text-[11px] leading-snug text-muted-foreground">
+                      {p.annualBillingLabel}
+                    </p>
+                  ) : null}
                 </div>
               ))}
             </div>

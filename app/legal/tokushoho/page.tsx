@@ -1,6 +1,11 @@
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { feetyAppUrl } from "@/lib/feety-app-origin"
+import { PLAN_CATALOG } from "@/lib/stripe/catalog"
+
+function yen(num: number) {
+  return `${num.toLocaleString("ja-JP")}円`
+}
 
 export default function TokushohoPage() {
   return (
@@ -60,12 +65,24 @@ export default function TokushohoPage() {
               <dd className="text-gray-900 sm:col-span-2">
                 <ul className="space-y-1">
                   <li>フリープラン：0円／月額（お試し利用。案件5件／月まで、提携医院3件まで等の上限あり）</li>
-                  <li>ライトプラン：月額 3,980円（税別）</li>
-                  <li>スタンダードプラン：月額 9,800円（税別）</li>
-                  <li>プロプラン：月額 19,800円（税別）</li>
+                  <li>
+                    ライトプラン：月払い 月額 {yen(PLAN_CATALOG.lite.monthlyAmountTaxIncludedJpy)}
+                    （税込）／年払い 年額 {yen(PLAN_CATALOG.lite.annualAmountTaxIncludedJpy)}
+                    （税込・月額の10回分、2か月分相当お得）
+                  </li>
+                  <li>
+                    スタンダードプラン：月払い 月額 {yen(PLAN_CATALOG.standard.monthlyAmountTaxIncludedJpy)}
+                    （税込）／年払い 年額 {yen(PLAN_CATALOG.standard.annualAmountTaxIncludedJpy)}
+                    （税込・月額の10回分、2か月分相当お得）
+                  </li>
+                  <li>
+                    プロプラン：月払い 月額 {yen(PLAN_CATALOG.professional.monthlyAmountTaxIncludedJpy)}
+                    （税込）／年払い 年額 {yen(PLAN_CATALOG.professional.annualAmountTaxIncludedJpy)}
+                    （税込・月額の10回分、2か月分相当お得）
+                  </li>
                 </ul>
                 <p className="mt-2 text-sm text-gray-600">
-                  有料プランの表示は税別です。消費税は法令に従いご請求いたします。
+                  上記の有料プラン価格はすべて税込表示です。
                 </p>
               </dd>
             </div>
@@ -73,7 +90,7 @@ export default function TokushohoPage() {
             <div className="py-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
               <dt className="text-sm font-semibold text-gray-500">代金の支払時期</dt>
               <dd className="text-gray-900 sm:col-span-2">
-                初回申し込み時、および毎月自動更新
+                初回申し込み時、および契約内容に応じて毎月または毎年の自動更新時
               </dd>
             </div>
 

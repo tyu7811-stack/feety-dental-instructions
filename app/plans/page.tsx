@@ -52,7 +52,7 @@ export default function PlansPage() {
           技工所様向けプラン
         </h2>
         <p className="text-center text-sm text-muted-foreground mb-10 max-w-2xl mx-auto">
-          有料プランの表示価格は税別です。消費税は法令に従い別途ご請求いたします。
+          有料プランの表示はすべて税込です。年払いは月額の10回分のお支払いで12か月分ご利用いただけます（2か月分相当お得）。
         </p>
 
         <p className="text-center text-sm text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed">
@@ -64,7 +64,7 @@ export default function PlansPage() {
           <Link href={feetyAppUrl("/lab/billing")} className="text-primary underline-offset-2 hover:underline">
             プラン・お支払い
           </Link>
-          から Stripe Checkout（クレジットカード）でまとめてお手続きください。
+          から Stripe Checkout（クレジットカード）で月払いまたは年払いをお選びください。
         </p>
 
         <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-20">
@@ -104,6 +104,11 @@ export default function PlansPage() {
                   <span className="text-3xl font-bold text-foreground">{plan.priceDisplay}</span>
                   <span className="text-sm text-muted-foreground">{plan.priceNote}</span>
                 </div>
+                {plan.annualBillingLabel ? (
+                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                    {plan.annualBillingLabel}
+                  </p>
+                ) : null}
               </div>
 
               <div className="px-6 py-6 bg-white/30">
@@ -180,13 +185,13 @@ export default function PlansPage() {
             <div className="rounded-xl border border-border bg-card p-5">
               <h3 className="font-semibold text-foreground mb-2">表示価格は税込ですか？</h3>
               <p className="text-sm text-muted-foreground">
-                有料プラン（ライト・スタンダード・プロ）は税別表示です。消費税はご契約・決済手続きに従い別途となります。
+                はい。ライト・スタンダード・プロの価格はすべて税込表示です。お支払い総額に消費税は上乗せされません。
               </p>
             </div>
             <div className="rounded-xl border border-border bg-card p-5">
               <h3 className="font-semibold text-foreground mb-2">支払い方法は何がありますか？</h3>
               <p className="text-sm text-muted-foreground">
-                有料プランは Stripe Checkout（クレジットカード）でのお支払いに対応しています。
+                Stripe Checkout（クレジットカード）にて、月払い（毎月自動更新）または年払い（毎年自動更新）をお選びいただけます。
               </p>
             </div>
           </div>

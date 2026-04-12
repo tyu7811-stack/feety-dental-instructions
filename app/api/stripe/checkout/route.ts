@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import { createClient } from "@/lib/supabase/server"
-import { isBillablePlanId } from "@/lib/stripe/catalog"
+import { isBillablePlanId, isBillingInterval } from "@/lib/stripe/catalog"
 import { checkoutLineItemForPlan } from "@/lib/stripe/line-items"
 import { getStripe } from "@/lib/stripe/server"
 
@@ -9,6 +9,7 @@ export const runtime = "nodejs"
 
 const bodySchema = z.object({
   planId: z.string(),
+  billingInterval: z.enum(["month", "year"]).optional(),
 })
 
 function appOrigin(request: NextRequest): string {
@@ -34,6 +35,8 @@ export async function POST(request: NextRequest) {
   }
 
   const planId = parsed.data.planId
+  const rawInterval = parsed.data.billingInterval ?? "month"
+  const billingInterval = isBillingInterval(rawInterval) ? rawInterval : "month"
 
   const supabase = await createClient()
   const {
@@ -50,18 +53,20 @@ export async function POST(request: NextRequest) {
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
-      line_items: [checkoutLineItemForPlan(planId)],
+      line_items: [checkoutLineItemForPlan(planId, billingInterval)],
       success_url: `${origin}/lab/billing/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/lab/billing?canceled=1`,
       client_reference_id: user.id,
       metadata: {
         supabase_user_id: user.id,
         plan_id: planId,
+        billing_interval: billingInterval,
       },
       subscription_data: {
         metadata: {
           supabase_user_id: user.id,
           plan_id: planId,
+          billing_interval: billingInterval,
         },
       },
       customer_email: user.email ?? undefined,
