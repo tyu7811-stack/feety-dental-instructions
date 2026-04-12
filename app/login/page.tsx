@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import { createClient } from "@/lib/supabase/client"
 import { waitUntilSupabaseAuthCookiesVisible } from "@/lib/supabase/wait-auth-cookies"
 import Link from "next/link"
+import { feetyAppUrl } from "@/lib/feety-app-origin"
 
 export default function LoginPage() {
   const supabase = createClient()
@@ -159,7 +160,7 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 bg-[#1a6cf0] flex-col justify-between p-12">
         <div>
           <Link
-            href="/"
+            href={feetyAppUrl("/")}
             className="inline-flex items-center gap-3 rounded-lg outline-offset-4 transition-opacity hover:opacity-90"
           >
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white">
@@ -193,7 +194,7 @@ export default function LoginPage() {
       <div className="flex w-full lg:w-1/2 flex-col justify-center px-6 py-12 sm:px-12 lg:px-16 bg-background">
         <div className="mx-auto w-full max-w-sm">
           <div className="lg:hidden mb-10">
-            <Link href="/" className="inline-flex items-center gap-3 outline-offset-4">
+            <Link href={feetyAppUrl("/")} className="inline-flex items-center gap-3 outline-offset-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-foreground">
                 <FlaskConical className="h-5 w-5 text-white" />
               </div>
@@ -347,7 +348,7 @@ export default function LoginPage() {
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             アカウントをお持ちでない方は
-            <Link href="/signup2" className="ml-1 text-[#1a6cf0] font-semibold hover:underline">
+            <Link href={feetyAppUrl("/signup2")} className="ml-1 text-[#1a6cf0] font-semibold hover:underline">
               こちらから登録
             </Link>
           </p>
@@ -360,7 +361,7 @@ export default function LoginPage() {
               歯科医院向けは新規指示書、技工所向けはダッシュボードのデモです（送信などは失敗する場合があります）。
             </p>
             <Link
-              href="/clinic/orders/new?demo=true"
+              href={feetyAppUrl("/clinic/orders/new?demo=true")}
               className="inline-flex w-full items-center justify-center gap-2 rounded-lg border-2 border-border bg-background px-4 py-3 text-sm font-semibold text-foreground transition-all hover:bg-accent active:scale-[0.98]"
             >
               <Stethoscope className="h-4 w-4" />
@@ -368,7 +369,7 @@ export default function LoginPage() {
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
-              href="/lab/dashboard?demo=true"
+              href={feetyAppUrl("/lab/dashboard?demo=true")}
               className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1a6cf0] px-4 py-3 text-sm font-semibold text-white transition-all hover:bg-[#1559cc] active:scale-[0.98]"
             >
               <FlaskConical className="h-4 w-4" />

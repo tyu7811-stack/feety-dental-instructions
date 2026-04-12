@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { FlaskConical, Eye, EyeOff, Loader2 } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import Link from "next/link"
+import { feetyAppUrl } from "@/lib/feety-app-origin"
 import { completeSignupProvisioning } from "@/lib/auth/complete-signup-profile"
 
 export default function RegisterPage() {
@@ -182,11 +183,11 @@ export default function RegisterPage() {
 
         <div className="space-y-8">
           <h1 className="text-5xl font-bold text-white leading-tight">
-            歯科技工指示書システム
+            歯科技工指示書クラウド
           </h1>
 
           <p className="text-lg text-white/80">
-            技工所と医院をシームレスに接続し、効率的な指示書管理を実現します。
+            技工所と医院をシームレスに接続し、指示書の作成から納品まで一元管理します。
           </p>
 
           <div className="space-y-4">
@@ -215,8 +216,8 @@ export default function RegisterPage() {
                 <div className="h-2 w-2 rounded-full bg-white" />
               </div>
               <div>
-                <div className="font-semibold text-white">無料トライアル</div>
-                <div className="text-sm text-white/70">契約不要でお気軽にお試しいただけます</div>
+                <div className="font-semibold text-white">フリー（¥0・税込）</div>
+                <div className="text-sm text-white/70">14日間のお試しのみ。終了後は機能制限があります</div>
               </div>
             </div>
           </div>
@@ -245,7 +246,7 @@ export default function RegisterPage() {
                 メールが届かない場合は、迷惑メールフォルダをご確認ください。
               </p>
               <Link
-                href="/login"
+                href={feetyAppUrl("/login")}
                 className="inline-block rounded-lg bg-[#1a6cf0] px-6 py-3 font-semibold text-white hover:bg-[#0052cc]"
               >
                 ログインページへ
@@ -396,7 +397,7 @@ export default function RegisterPage() {
               />
               <label htmlFor="terms" className="text-sm text-gray-600">
                 <Link
-                  href="/legal/terms"
+                  href={feetyAppUrl("/legal/terms")}
                   className="text-[#1a6cf0] hover:underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -405,7 +406,7 @@ export default function RegisterPage() {
                 </Link>
                 および
                 <Link
-                  href="/legal/tokushoho"
+                  href={feetyAppUrl("/legal/tokushoho")}
                   className="text-[#1a6cf0] hover:underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -434,7 +435,7 @@ export default function RegisterPage() {
 
               <div className="mt-6 text-center text-sm text-gray-600">
                 アカウントをお持ちですか？{" "}
-                <Link href="/login" className="text-[#1a6cf0] hover:underline">
+                <Link href={feetyAppUrl("/login")} className="text-[#1a6cf0] hover:underline">
                   ログイン
                 </Link>
               </div>

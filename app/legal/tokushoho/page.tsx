@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
+import { feetyAppUrl } from "@/lib/feety-app-origin"
 
 export default function TokushohoPage() {
   return (
@@ -103,12 +104,15 @@ export default function TokushohoPage() {
           </div>
         </div>
 
-        <div className="mt-6 text-center">
-          <Link
-            href="/legal/terms"
-            className="text-sm text-blue-600 hover:underline"
-          >
-            利用規約を見る
+        <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-center">
+          <Link href={feetyAppUrl("/")} className="text-blue-600 hover:underline">
+            トップページ
+          </Link>
+          <Link href={feetyAppUrl("/plans")} className="text-blue-600 hover:underline">
+            料金・プラン
+          </Link>
+          <Link href={feetyAppUrl("/legal/terms")} className="text-blue-600 hover:underline">
+            利用規約
           </Link>
         </div>
       </div>

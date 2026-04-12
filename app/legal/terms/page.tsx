@@ -1,3 +1,6 @@
+import Link from "next/link"
+import { feetyAppUrl } from "@/lib/feety-app-origin"
+
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -120,7 +123,25 @@ export default function TermsPage() {
           <div className="mt-10 border-t border-gray-200 pt-6">
             <p className="text-center text-xs text-gray-500">
               制定日：2024年1月1日<br />
-              最終更新日：2024年1月1日
+              最終更新日：2026年4月12日
+            </p>
+            <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-600">
+              <Link href={feetyAppUrl("/")} className="text-blue-600 hover:underline">
+                トップページ
+              </Link>
+              <Link href={feetyAppUrl("/plans")} className="text-blue-600 hover:underline">
+                料金・プラン
+              </Link>
+              <Link href={feetyAppUrl("/legal/tokushoho")} className="text-blue-600 hover:underline">
+                特定商取引法に基づく表記
+              </Link>
+            </div>
+            <p className="mt-4 text-center text-xs text-gray-500">
+              販売者・問い合わせ窓口：ナチュラルアート（
+              <a href="mailto:tyu66457@gmail.com" className="text-blue-600 hover:underline">
+                tyu66457@gmail.com
+              </a>
+              ）
             </p>
           </div>
         </div>

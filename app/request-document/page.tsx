@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { ArrowLeft, FileText, CheckCircle, Building2, User, Mail, Phone, MessageSquare, Download } from "lucide-react"
+import { feetyAppUrl } from "@/lib/feety-app-origin"
 
 export default function RequestDocumentPage() {
   const [submitted, setSubmitted] = useState(false)
@@ -26,9 +27,9 @@ export default function RequestDocumentPage() {
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/30">
         <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
           <div className="mx-auto max-w-4xl flex items-center justify-between px-4 py-4">
-            <Link href="/" className="flex items-center gap-2 text-primary font-bold text-lg">
+            <Link href={feetyAppUrl("/")} className="flex items-center gap-2 text-primary font-bold text-lg">
               <FileText className="h-5 w-5" />
-              技工指示書システム
+              FEETY
             </Link>
           </div>
         </header>
@@ -57,7 +58,7 @@ export default function RequestDocumentPage() {
               </h2>
               <div className="space-y-3">
                 <a
-                  href="/documents/system-overview.html"
+                  href={feetyAppUrl("/documents/system-overview.html")}
                   download="システム概要資料.html"
                   className="flex items-center justify-between gap-3 rounded-lg border border-border bg-white p-4 hover:bg-gray-50 transition-colors group"
                 >
@@ -73,7 +74,7 @@ export default function RequestDocumentPage() {
                   <Download className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                 </a>
                 <a
-                  href="/documents/pricing-details.html"
+                  href={feetyAppUrl("/documents/pricing-details.html")}
                   download="料金プラン詳細資料.html"
                   className="flex items-center justify-between gap-3 rounded-lg border border-border bg-white p-4 hover:bg-gray-50 transition-colors group"
                 >
@@ -89,7 +90,7 @@ export default function RequestDocumentPage() {
                   <Download className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                 </a>
                 <a
-                  href="/documents/case-studies.html"
+                  href={feetyAppUrl("/documents/case-studies.html")}
                   download="導入事例集.html"
                   className="flex items-center justify-between gap-3 rounded-lg border border-border bg-white p-4 hover:bg-gray-50 transition-colors group"
                 >
@@ -109,13 +110,13 @@ export default function RequestDocumentPage() {
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
-                href="/plans"
+                href={feetyAppUrl("/plans")}
                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 プラン詳細に戻る
               </Link>
               <Link
-                href="/"
+                href={feetyAppUrl("/")}
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-border px-6 py-2.5 text-sm font-semibold text-foreground hover:bg-accent transition-colors"
               >
                 トップページへ
@@ -123,6 +124,25 @@ export default function RequestDocumentPage() {
             </div>
           </div>
         </main>
+
+        <footer className="border-t border-border bg-muted/30 mt-12">
+          <div className="mx-auto max-w-4xl px-4 py-6 text-center text-xs text-muted-foreground">
+            <p>販売者・問い合わせ窓口：ナチュラルアート</p>
+            <p className="mt-1">
+              <a href="mailto:tyu66457@gmail.com" className="hover:text-foreground underline-offset-2 hover:underline">
+                tyu66457@gmail.com
+              </a>
+            </p>
+            <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1">
+              <Link href={feetyAppUrl("/legal/terms")} className="hover:text-foreground">
+                利用規約
+              </Link>
+              <Link href={feetyAppUrl("/legal/tokushoho")} className="hover:text-foreground">
+                特定商取引法に基づく表記
+              </Link>
+            </div>
+          </div>
+        </footer>
       </div>
     )
   }
@@ -132,12 +152,12 @@ export default function RequestDocumentPage() {
       {/* Header */}
       <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="mx-auto max-w-4xl flex items-center justify-between px-4 py-4">
-          <Link href="/" className="flex items-center gap-2 text-primary font-bold text-lg">
+          <Link href={feetyAppUrl("/")} className="flex items-center gap-2 text-primary font-bold text-lg">
             <FileText className="h-5 w-5" />
-            技工指示書システム
+            FEETY
           </Link>
           <Link
-            href="/plans"
+            href={feetyAppUrl("/plans")}
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -153,7 +173,7 @@ export default function RequestDocumentPage() {
             資料請求
           </h1>
           <p className="mt-2 text-muted-foreground">
-            技工指示書自動化システムの詳細資料をお送りします
+            FEETY（歯科技工指示書クラウド）の詳細資料をお送りします
           </p>
         </div>
 
@@ -282,7 +302,7 @@ export default function RequestDocumentPage() {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                placeholder="例：info@example.com"
+                placeholder="例：contact@example.com"
                 required
               />
             </div>
@@ -342,7 +362,18 @@ export default function RequestDocumentPage() {
               tyu66457@gmail.com
             </a>
           </p>
-          <p className="mt-2">© 2026 FEETY. All rights reserved.</p>
+          <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1">
+            <Link href={feetyAppUrl("/legal/terms")} className="hover:text-foreground">
+              利用規約
+            </Link>
+            <Link href={feetyAppUrl("/legal/tokushoho")} className="hover:text-foreground">
+              特定商取引法に基づく表記
+            </Link>
+            <Link href={feetyAppUrl("/plans")} className="hover:text-foreground">
+              料金・プラン
+            </Link>
+          </div>
+          <p className="mt-3">© 2026 FEETY. All rights reserved.</p>
         </div>
       </footer>
     </div>
