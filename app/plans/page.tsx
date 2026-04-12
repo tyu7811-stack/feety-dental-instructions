@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Check, X, Sparkles, ArrowLeft } from "lucide-react"
+import { Check, Sparkles, ArrowLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   RolePersonaCards,
@@ -11,84 +11,71 @@ const plans = [
   {
     id: "free",
     name: "フリー",
-    description: "まずはお試し",
+    description: "お試し利用",
     price: "¥0",
-    priceNote: "税込み／14日間のお試しのみ。その後は機能制限があります。",
+    priceNote: "/ 月額",
     color: "bg-emerald-50 border-emerald-300",
     headerColor: "bg-emerald-700",
     popular: false,
     features: [
-      { name: "お試し期間14日間", included: true },
-      { name: "期間終了後は機能制限", included: true },
-      { name: "案件管理", included: true },
-      { name: "技工指示書の基本作成", included: true },
-      { name: "有料プランへのアップグレード", included: true },
+      { name: "案件管理（5件／月まで）", included: true },
+      { name: "技工指示書の受信", included: true },
+      { name: "納品書作成", included: true },
+      { name: "提携医院（3件まで）", included: true },
     ],
   },
   {
     id: "lite",
     name: "ライト",
-    description: "小規模な技工所・医院向け",
-    price: "¥2,980",
-    priceNote: "税込み／月",
+    description: "小規模技工所向け",
+    price: "¥3,980",
+    priceNote: "/ 月額（税別）",
     color: "bg-slate-100 border-slate-300",
     headerColor: "bg-slate-600",
     popular: false,
     features: [
-      { name: "案件管理", included: true },
-      { name: "技工指示書作成・送信", included: true },
+      { name: "案件管理（30件／月まで）", included: true },
+      { name: "技工指示書の受信", included: true },
       { name: "納品書作成", included: true },
-      { name: "指示書履歴閲覧", included: true },
-      { name: "提携医院管理（5件まで）", included: true },
-      { name: "高度な分析", included: false },
-      { name: "売上・コスト分析", included: false },
-      { name: "納期遵守率分析", included: false },
-      { name: "利益率分析", included: false },
-      { name: "優先サポート", included: false },
+      { name: "提携医院（10件まで）", included: true },
+      { name: "メールサポート", included: true },
     ],
   },
   {
     id: "standard",
     name: "スタンダード",
-    description: "成長中の技工所・医院向け",
+    description: "中規模技工所向け",
     price: "¥9,800",
-    priceNote: "税込み／月",
+    priceNote: "/ 月額（税別）",
     color: "bg-blue-50 border-blue-400",
     headerColor: "bg-primary",
     popular: true,
     features: [
-      { name: "案件管理", included: true },
-      { name: "技工指示書作成・送信", included: true },
+      { name: "案件管理（100件／月まで）", included: true },
+      { name: "技工指示書の受信", included: true },
       { name: "納品書作成", included: true },
-      { name: "指示書履歴閲覧", included: true },
-      { name: "提携医院管理（20件まで）", included: true },
-      { name: "高度な分析（制限あり）", included: true },
-      { name: "売上・コスト分析", included: true },
-      { name: "納期遵守率分析", included: false },
-      { name: "利益率分析", included: false },
-      { name: "優先サポート", included: false },
+      { name: "提携医院（30件まで）", included: true },
+      { name: "売上分析レポート", included: true },
+      { name: "優先サポート", included: true },
     ],
   },
   {
     id: "professional",
     name: "プロ",
-    description: "大規模な技工所・医院向け",
+    description: "大規模技工所向け",
     price: "¥19,800",
-    priceNote: "税込み／月",
+    priceNote: "/ 月額（税別）",
     color: "bg-amber-50 border-amber-400",
     headerColor: "bg-amber-600",
     popular: false,
     features: [
-      { name: "案件管理", included: true },
-      { name: "技工指示書作成・送信", included: true },
+      { name: "案件管理（無制限）", included: true },
+      { name: "技工指示書の受信", included: true },
       { name: "納品書作成", included: true },
-      { name: "指示書履歴閲覧", included: true },
-      { name: "提携医院管理（無制限）", included: true },
-      { name: "高度な分析", included: true },
-      { name: "売上・コスト分析", included: true },
-      { name: "納期遵守率分析", included: true },
-      { name: "利益率分析", included: true },
-      { name: "優先サポート", included: true },
+      { name: "提携医院（無制限）", included: true },
+      { name: "高度な分析機能", included: true },
+      { name: "専任サポート", included: true },
+      { name: "カスタム機能相談", included: true },
     ],
   },
 ] as const
@@ -115,7 +102,7 @@ export default function PlansPage() {
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-12">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
             料金・プラン
           </h1>
@@ -124,12 +111,19 @@ export default function PlansPage() {
           </p>
         </div>
 
-        <div className="mb-14 mt-10">
+        <div className="mb-10 mt-8">
           <RolePersonaCompactIntro layout="plans" />
           <div className="mt-10">
             <RolePersonaCards layout="plans" />
           </div>
         </div>
+
+        <h2 className="text-center text-xl font-bold tracking-tight text-foreground mb-8">
+          技工所様向けプラン
+        </h2>
+        <p className="text-center text-sm text-muted-foreground mb-10 max-w-2xl mx-auto">
+          有料プランの表示価格は税別です。消費税は法令に従い別途ご請求いたします。
+        </p>
 
         <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-16">
           {plans.map((plan) => (
@@ -138,12 +132,12 @@ export default function PlansPage() {
               className={cn(
                 "relative rounded-2xl border-2 overflow-hidden transition-transform hover:scale-[1.02]",
                 plan.color,
-                plan.popular && "ring-2 ring-primary ring-offset-2"
+                plan.popular && "ring-2 ring-foreground ring-offset-2"
               )}
             >
               {plan.popular && (
-                <div className="absolute top-4 right-4 bg-primary text-primary-foreground text-xs font-bold px-2.5 py-1 rounded-full">
-                  おすすめ
+                <div className="absolute top-4 right-4 bg-foreground text-background text-xs font-bold px-2.5 py-1 rounded-full">
+                  人気
                 </div>
               )}
 
@@ -163,23 +157,10 @@ export default function PlansPage() {
                 <ul className="space-y-3">
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-center gap-3">
-                      {feature.included ? (
-                        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100">
-                          <Check className="h-3 w-3 text-emerald-600" />
-                        </div>
-                      ) : (
-                        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-100">
-                          <X className="h-3 w-3 text-slate-400" />
-                        </div>
-                      )}
-                      <span
-                        className={cn(
-                          "text-sm",
-                          feature.included ? "text-foreground" : "text-muted-foreground"
-                        )}
-                      >
-                        {feature.name}
-                      </span>
+                      <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100">
+                        <Check className="h-3 w-3 text-emerald-600" />
+                      </div>
+                      <span className="text-sm text-foreground">{feature.name}</span>
                     </li>
                   ))}
                 </ul>
@@ -200,7 +181,7 @@ export default function PlansPage() {
                     <Link href={feetyAppUrl("/legal/tokushoho")} className="text-primary underline hover:no-underline">
                       特定商取引法に基づく表記
                     </Link>
-                    を必ずご確認ください。ボタンを押すことで、これらに同意したものとみなされます。
+                    を必ずご確認ください。
                   </p>
                 )}
                 <Link
@@ -208,11 +189,13 @@ export default function PlansPage() {
                   className={cn(
                     "flex w-full items-center justify-center rounded-lg py-2.5 text-sm font-semibold transition-colors",
                     plan.popular
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                      : "bg-foreground/10 text-foreground hover:bg-foreground/20"
+                      ? "bg-foreground text-background hover:bg-foreground/90"
+                      : plan.id === "free"
+                        ? "bg-foreground/10 text-foreground hover:bg-foreground/20"
+                        : "border-2 border-foreground bg-white text-foreground hover:bg-muted/50"
                   )}
                 >
-                  {plan.id === "free" ? "無料で始める" : "このプランで申し込む"}
+                  {plan.id === "free" ? "無料で始める" : "選択する"}
                 </Link>
               </div>
             </div>
@@ -229,9 +212,15 @@ export default function PlansPage() {
               </p>
             </div>
             <div className="rounded-xl border border-border bg-card p-5">
-              <h3 className="font-semibold text-foreground mb-2">フリー（¥0）プランの「14日間のお試し」とは？</h3>
+              <h3 className="font-semibold text-foreground mb-2">フリー（¥0）プランの内容は？</h3>
               <p className="text-sm text-muted-foreground">
-                フリープランは税込0円で、初回ご利用から14日間はお試しとしてご利用いただけます。14日間を過ぎると機能制限がかかります。制限のない利用には、ライト・スタンダード・プロの各プランをご検討ください。
+                お試し利用として、案件は月5件まで、提携医院は3件までご利用いただけます。より多くの案件や医院を扱う場合は、ライト・スタンダード・プロへのアップグレードをご検討ください。
+              </p>
+            </div>
+            <div className="rounded-xl border border-border bg-card p-5">
+              <h3 className="font-semibold text-foreground mb-2">表示価格は税込ですか？</h3>
+              <p className="text-sm text-muted-foreground">
+                有料プラン（ライト・スタンダード・プロ）は税別表示です。消費税はご契約・決済手続きに従い別途となります。
               </p>
             </div>
             <div className="rounded-xl border border-border bg-card p-5">

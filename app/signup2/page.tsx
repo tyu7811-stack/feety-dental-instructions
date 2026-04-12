@@ -216,8 +216,8 @@ export default function RegisterPage() {
                 <div className="h-2 w-2 rounded-full bg-white" />
               </div>
               <div>
-                <div className="font-semibold text-white">フリー（¥0・税込）</div>
-                <div className="text-sm text-white/70">14日間のお試しのみ。終了後は機能制限があります</div>
+                <div className="font-semibold text-white">フリー（¥0）</div>
+                <div className="text-sm text-white/70">お試し利用（案件5件／月・提携医院3件まで等）</div>
               </div>
             </div>
           </div>

@@ -59,11 +59,14 @@ export default function TokushohoPage() {
               <dt className="text-sm font-semibold text-gray-500">販売価格</dt>
               <dd className="text-gray-900 sm:col-span-2">
                 <ul className="space-y-1">
-                  <li>フリープラン：0円（税込）／初回から14日間のお試し利用のみ。終了後は機能制限があります。</li>
-                  <li>ライトプラン：月額 2,980円（税込）</li>
-                  <li>スタンダードプラン：月額 9,800円（税込）</li>
-                  <li>プロプラン：月額 19,800円（税込）</li>
+                  <li>フリープラン：0円／月額（お試し利用。案件5件／月まで、提携医院3件まで等の上限あり）</li>
+                  <li>ライトプラン：月額 3,980円（税別）</li>
+                  <li>スタンダードプラン：月額 9,800円（税別）</li>
+                  <li>プロプラン：月額 19,800円（税別）</li>
                 </ul>
+                <p className="mt-2 text-sm text-gray-600">
+                  有料プランの表示は税別です。消費税は法令に従いご請求いたします。
+                </p>
               </dd>
             </div>
 

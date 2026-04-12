@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react"
 import Link from "next/link"
 import { Check, CreditCard, Crown, Sparkles } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 type Plan = "free" | "lite" | "standard" | "professional"
 
@@ -69,7 +70,7 @@ export default function BillingPage() {
             プラン・お支払い
           </h1>
           <p className="mt-2 text-sm sm:text-base text-gray-500">
-            フリー（¥0・税込）は初回から14日間のお試しのみで、終了後は機能制限があります。有料プランは Stripe Checkout（本番はライブモードの API キー）で決済します。
+            技工所様向けプランです。フリーはお試し利用（案件・医院数に上限あり）。有料は税別月額で、Stripe Checkout より決済します。
           </p>
           {checkoutError && (
             <p className="mt-2 text-sm text-red-600" role="alert">
@@ -89,7 +90,7 @@ export default function BillingPage() {
                 <p className="text-xs sm:text-sm text-sky-800/80">現在のプラン</p>
                 <p className="text-sm sm:text-base font-bold text-sky-900 truncate">
                   {currentPlan === "free"
-                    ? "フリー（14日間お試し後は制限）"
+                    ? "フリー（お試し利用）"
                     : currentPlan === "lite"
                       ? "ライト"
                       : currentPlan === "standard"
@@ -127,19 +128,18 @@ export default function BillingPage() {
             <PlanCard
               planId="free"
               title="フリー"
-              priceLabel="¥0 / 月（税込）"
-              description="14日間のお試しのみ。その後は機能制限"
+              priceLabel="¥0 / 月額"
+              description="お試し利用"
               border="border-emerald-200"
               currentPlan={currentPlan}
               onSelect={handleSelectPlan}
               badge={null}
               icon={<Sparkles className="h-5 w-5 text-emerald-600" />}
               features={[
-                "案件管理（月10件まで）",
-                "技工指示書の基本作成",
-                "提携医院（1件まで）",
-                "標準テンプレート",
-                "メールサポート（基本）",
+                "案件管理（5件／月まで）",
+                "技工指示書の受信",
+                "納品書作成",
+                "提携医院（3件まで）",
               ]}
             />
 
@@ -147,8 +147,8 @@ export default function BillingPage() {
             <PlanCard
               planId="lite"
               title="ライト"
-              priceLabel="¥2,980 / 月（税込）"
-              description="小規模ラボ向け"
+              priceLabel="¥3,980 / 月（税別）"
+              description="小規模技工所向け"
               border="border-slate-200"
               currentPlan={currentPlan}
               onSelect={handleSelectPlan}
@@ -157,33 +157,34 @@ export default function BillingPage() {
               badge={null}
               icon={<Sparkles className="h-5 w-5 text-slate-600" />}
               features={[
-                "案件管理（制限あり）",
-                "技工指示書作成・送信",
+                "案件管理（30件／月まで）",
+                "技工指示書の受信",
                 "納品書作成",
-                "指示書履歴閲覧",
-                "提携医院管理（5件まで）",
+                "提携医院（10件まで）",
+                "メールサポート",
               ]}
             />
 
             {/* Standard */}
             <PlanCard
               planId="standard"
-              title="スタンダード（推奨）"
-              priceLabel="¥9,800 / 月（税込）"
-              description="ほとんどのラボ向け"
+              title="スタンダード"
+              priceLabel="¥9,800 / 月（税別）"
+              description="中規模技工所向け"
               border="border-primary/20"
               currentPlan={currentPlan}
               onSelect={handleSelectPlan}
               checkoutLoading={checkoutPlan === "standard"}
               onCheckout={startStripeCheckout}
-              badge="おすすめ"
+              badge="人気"
               icon={<Crown className="h-5 w-5 text-primary-foreground" />}
               features={[
-                "案件管理（無制限）",
-                "書類テンプレート（拡張）",
-                "提携医院（20件まで）",
-                "高度な分析（制限あり）",
-                "プライオリティサポート（準）",
+                "案件管理（100件／月まで）",
+                "技工指示書の受信",
+                "納品書作成",
+                "提携医院（30件まで）",
+                "売上分析レポート",
+                "優先サポート",
               ]}
             />
 
@@ -191,8 +192,8 @@ export default function BillingPage() {
             <PlanCard
               planId="professional"
               title="プロ"
-              priceLabel="¥19,800 / 月（税込）"
-              description="大規模ラボ向け"
+              priceLabel="¥19,800 / 月（税別）"
+              description="大規模技工所向け"
               border="border-amber-200"
               currentPlan={currentPlan}
               onSelect={handleSelectPlan}
@@ -202,10 +203,12 @@ export default function BillingPage() {
               icon={<Crown className="h-5 w-5 text-amber-600" />}
               features={[
                 "案件管理（無制限）",
+                "技工指示書の受信",
+                "納品書作成",
                 "提携医院（無制限）",
-                "高度な分析（全機能）",
-                "納期・利益率分析",
+                "高度な分析機能",
                 "専任サポート",
+                "カスタム機能相談",
               ]}
             />
           </div>
@@ -278,7 +281,7 @@ function PlanCard({
     : isCurrent
       ? "現在のプラン"
       : isPaid
-        ? "Stripe Checkout で契約"
+        ? "選択する（Stripe）"
         : "このプランにする"
 
   function handlePrimaryClick() {
@@ -299,7 +302,12 @@ function PlanCard({
       ].join(" ")}
     >
       {badge && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[11px] font-bold text-white">
+        <div
+          className={cn(
+            "absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-[11px] font-bold text-white",
+            badge === "人気" ? "bg-foreground" : "bg-primary"
+          )}
+        >
           {badge}
         </div>
       )}
@@ -321,7 +329,7 @@ function PlanCard({
       </div>
 
       <ul className="space-y-1.5 mb-3">
-        {features.slice(0, 5).map((f) => (
+        {features.map((f) => (
           <li key={f} className="flex items-center gap-2 text-xs text-gray-700">
             <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-100">
               <Check className="h-2.5 w-2.5 text-emerald-600" />
