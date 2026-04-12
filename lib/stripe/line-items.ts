@@ -1,49 +1,68 @@
 import type Stripe from "stripe"
 import {
   type BillablePlanId,
-  type BillingInterval,
+  INITIAL_FEE_TAX_INCLUDED_JPY,
   PLAN_CATALOG,
-  catalogUnitAmount,
 } from "@/lib/stripe/catalog"
 
 /**
- * ダッシュボードの Price ID があれば使用。なければサーバーカタログで price_data を生成。
- *
- * 環境変数（本番推奨）:
- * - 月払い: STRIPE_PRICE_LITE_MONTHLY, STRIPE_PRICE_STANDARD_MONTHLY, STRIPE_PRICE_PROFESSIONAL_MONTHLY
- * - 年払い: STRIPE_PRICE_LITE_YEARLY, STRIPE_PRICE_STANDARD_YEARLY, STRIPE_PRICE_PROFESSIONAL_YEARLY
- *
- * 後方互換: 月払いのみ STRIPE_PRICE_LITE 等があれば月払いとして使用（年払いは _YEARLY が必要）
+ * 月額サブスクの1行。Price ID 優先。
+ * STRIPE_PRICE_LITE_MONTHLY または後方互換 STRIPE_PRICE_LITE
  */
-export function checkoutLineItemForPlan(
-  planId: BillablePlanId,
-  interval: BillingInterval
+function recurringLineItem(
+  planId: BillablePlanId
 ): Stripe.Checkout.SessionCreateParams.LineItem {
   const u = planId.toUpperCase()
   const monthlyKey = `STRIPE_PRICE_${u}_MONTHLY` as const
-  const yearlyKey = `STRIPE_PRICE_${u}_YEARLY` as const
   const legacyKey = `STRIPE_PRICE_${u}` as const
-
   const priceId =
-    interval === "month"
-      ? process.env[monthlyKey]?.trim() || process.env[legacyKey]?.trim()
-      : process.env[yearlyKey]?.trim()
+    process.env[monthlyKey]?.trim() || process.env[legacyKey]?.trim()
 
   if (priceId) {
     return { price: priceId, quantity: 1 }
   }
 
   const c = PLAN_CATALOG[planId]
-  const stripeInterval = interval === "year" ? "year" : "month"
-  const suffix = interval === "year" ? "（年払い・税込）" : "（月払い・税込）"
-
   return {
     quantity: 1,
     price_data: {
       currency: "jpy",
-      product_data: { name: `${c.name}${suffix}` },
-      unit_amount: catalogUnitAmount(planId, interval),
-      recurring: { interval: stripeInterval },
+      product_data: { name: `${c.name}（月額・税込）` },
+      unit_amount: c.monthlyAmountTaxIncludedJpy,
+      recurring: { interval: "month" },
     },
   }
+}
+
+/** 初回のみ（税込）。Price ID 優先。 */
+function initialFeeLineItem(): Stripe.Checkout.SessionCreateParams.LineItem {
+  const priceId = process.env.STRIPE_PRICE_INITIAL_FEE?.trim()
+  if (priceId) {
+    return { price: priceId, quantity: 1 }
+  }
+  return {
+    quantity: 1,
+    price_data: {
+      currency: "jpy",
+      product_data: { name: "初回契約手数料（税込・全プラン共通）" },
+      unit_amount: INITIAL_FEE_TAX_INCLUDED_JPY,
+    },
+  }
+}
+
+/**
+ * 有料プランの Checkout 用 line_items。
+ * `includeInitialFee`: 初回契約手数料を同時請求するか（既に有料プラン契約中のアップグレード等では false）。
+ */
+export function checkoutLineItemsForPaidPlan(
+  planId: BillablePlanId,
+  options: { includeInitialFee: boolean }
+): Stripe.Checkout.SessionCreateParams.LineItem[] {
+  const items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
+    recurringLineItem(planId),
+  ]
+  if (options.includeInitialFee) {
+    items.push(initialFeeLineItem())
+  }
+  return items
 }

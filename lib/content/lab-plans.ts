@@ -6,6 +6,7 @@
 import {
   PLAN_CATALOG,
   formatYenTaxIncluded,
+  initialFeeSummaryLine,
 } from "@/lib/stripe/catalog"
 
 export const labPlanIds = ["free", "lite", "standard", "professional"] as const
@@ -17,14 +18,16 @@ export interface LabPlanMarketingRow {
   description: string
   priceDisplay: string
   priceNote: string
-  /** プラン・お支払い画面の金額1行（月払い） */
+  /** プラン・お支払い画面の月額1行 */
   billingPriceLabel: string
-  /** 年払い1行（有料プランのみ） */
-  annualBillingLabel?: string
+  /** 有料プラン共通の初回費用＋月額の説明 */
+  initialFeeNote?: string
   /** カード・比較表に並べる機能行 */
   features: readonly string[]
   popular: boolean
 }
+
+const PAID_INITIAL_NOTE = `${initialFeeSummaryLine()}（全プラン共通）`
 
 export const labPlansMarketing: readonly LabPlanMarketingRow[] = [
   {
@@ -49,7 +52,7 @@ export const labPlansMarketing: readonly LabPlanMarketingRow[] = [
     priceDisplay: formatYenTaxIncluded(PLAN_CATALOG.lite.monthlyAmountTaxIncludedJpy),
     priceNote: "/ 月（税込）",
     billingPriceLabel: `${formatYenTaxIncluded(PLAN_CATALOG.lite.monthlyAmountTaxIncludedJpy)} / 月（税込）`,
-    annualBillingLabel: `${formatYenTaxIncluded(PLAN_CATALOG.lite.annualAmountTaxIncludedJpy)} / 年（税込・月額の10回分／2か月分お得）`,
+    initialFeeNote: PAID_INITIAL_NOTE,
     features: [
       "案件管理（30件／月まで）",
       "技工指示書の受信",
@@ -66,7 +69,7 @@ export const labPlansMarketing: readonly LabPlanMarketingRow[] = [
     priceDisplay: formatYenTaxIncluded(PLAN_CATALOG.standard.monthlyAmountTaxIncludedJpy),
     priceNote: "/ 月（税込）",
     billingPriceLabel: `${formatYenTaxIncluded(PLAN_CATALOG.standard.monthlyAmountTaxIncludedJpy)} / 月（税込）`,
-    annualBillingLabel: `${formatYenTaxIncluded(PLAN_CATALOG.standard.annualAmountTaxIncludedJpy)} / 年（税込・月額の10回分／2か月分お得）`,
+    initialFeeNote: PAID_INITIAL_NOTE,
     features: [
       "案件管理（100件／月まで）",
       "技工指示書の受信",
@@ -84,7 +87,7 @@ export const labPlansMarketing: readonly LabPlanMarketingRow[] = [
     priceDisplay: formatYenTaxIncluded(PLAN_CATALOG.professional.monthlyAmountTaxIncludedJpy),
     priceNote: "/ 月（税込）",
     billingPriceLabel: `${formatYenTaxIncluded(PLAN_CATALOG.professional.monthlyAmountTaxIncludedJpy)} / 月（税込）`,
-    annualBillingLabel: `${formatYenTaxIncluded(PLAN_CATALOG.professional.annualAmountTaxIncludedJpy)} / 年（税込・月額の10回分／2か月分お得）`,
+    initialFeeNote: PAID_INITIAL_NOTE,
     features: [
       "案件管理（無制限）",
       "技工指示書の受信",

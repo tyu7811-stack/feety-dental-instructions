@@ -5,14 +5,9 @@ import Link from "next/link"
 import { Check, CreditCard, Crown, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getLabPlanMarketing } from "@/lib/content/lab-plans"
-import type { BillingInterval } from "@/lib/stripe/catalog"
+import { initialFeeSummaryLine } from "@/lib/stripe/catalog"
 
 type Plan = "free" | "lite" | "standard" | "professional"
-
-type CheckoutPending = {
-  plan: Exclude<Plan, "free">
-  interval: BillingInterval
-}
 
 export default function BillingPage() {
   const STORAGE_KEY = "v0.billing.currentPlan"
@@ -20,7 +15,7 @@ export default function BillingPage() {
   const [currentPlan, setCurrentPlan] = useState<Plan>("free")
   const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null)
   const [planLoading, setPlanLoading] = useState(true)
-  const [checkoutPending, setCheckoutPending] = useState<CheckoutPending | null>(null)
+  const [checkoutPlan, setCheckoutPlan] = useState<Exclude<Plan, "free"> | null>(null)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -86,17 +81,14 @@ export default function BillingPage() {
     window.localStorage.setItem(STORAGE_KEY, nextPlan)
   }
 
-  async function startStripeCheckout(
-    nextPlan: Exclude<Plan, "free">,
-    interval: BillingInterval
-  ) {
+  async function startStripeCheckout(nextPlan: Exclude<Plan, "free">) {
     setCheckoutError(null)
-    setCheckoutPending({ plan: nextPlan, interval })
+    setCheckoutPlan(nextPlan)
     try {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId: nextPlan, billingInterval: interval }),
+        body: JSON.stringify({ planId: nextPlan }),
       })
       const data = (await res.json()) as { url?: string; error?: string }
       if (!res.ok) {
@@ -111,7 +103,7 @@ export default function BillingPage() {
     } catch {
       setCheckoutError("通信エラーが発生しました")
     } finally {
-      setCheckoutPending(null)
+      setCheckoutPlan(null)
     }
   }
 
@@ -124,8 +116,10 @@ export default function BillingPage() {
             プラン・お支払い
           </h1>
           <p className="mt-2 text-sm sm:text-base text-gray-500">
-            技工所様向けプランです。フリーはお試し利用（案件・医院数に上限あり）。有料はすべて税込表示です。月払いまたは年払い（月額の10回分・2か月分相当お得）を Stripe
-            Checkout でお選びいただけます。お支払い完了後は Webhook により Supabase の契約情報が更新され、本ページの「現在のプラン」に反映されます。
+            技工所様向けプランです。フリーはお試し利用（案件・医院数に上限あり）。            有料はすべて税込です。ライト・スタンダード・プロ共通で{" "}
+            {initialFeeSummaryLine()}
+            。Stripe Checkout（月額サブスク）でお支払いください。既に有料プランをご利用中の方が別プランへ変更する場合、初回費用は請求されません。お支払い完了後は
+            Webhook により Supabase の契約情報が更新されます。
           </p>
           {checkoutError && (
             <p className="mt-2 text-sm text-red-600" role="alert">
@@ -211,13 +205,13 @@ export default function BillingPage() {
               planId="lite"
               title={getLabPlanMarketing("lite").name}
               priceLabel={getLabPlanMarketing("lite").billingPriceLabel}
-              annualPriceHint={getLabPlanMarketing("lite").annualBillingLabel}
+              initialFeeHint={getLabPlanMarketing("lite").initialFeeNote}
               description={getLabPlanMarketing("lite").description}
               border="border-slate-200"
               currentPlan={displayPlanForCards}
               planLoading={planLoading}
               onSelect={handleSelectPlan}
-              checkoutPending={checkoutPending}
+              checkoutPlan={checkoutPlan}
               onCheckout={startStripeCheckout}
               badge={null}
               icon={<Sparkles className="h-5 w-5 text-slate-600" />}
@@ -228,13 +222,13 @@ export default function BillingPage() {
               planId="standard"
               title={getLabPlanMarketing("standard").name}
               priceLabel={getLabPlanMarketing("standard").billingPriceLabel}
-              annualPriceHint={getLabPlanMarketing("standard").annualBillingLabel}
+              initialFeeHint={getLabPlanMarketing("standard").initialFeeNote}
               description={getLabPlanMarketing("standard").description}
               border="border-primary/20"
               currentPlan={displayPlanForCards}
               planLoading={planLoading}
               onSelect={handleSelectPlan}
-              checkoutPending={checkoutPending}
+              checkoutPlan={checkoutPlan}
               onCheckout={startStripeCheckout}
               badge={getLabPlanMarketing("standard").popular ? "人気" : null}
               icon={<Crown className="h-5 w-5 text-primary-foreground" />}
@@ -245,13 +239,13 @@ export default function BillingPage() {
               planId="professional"
               title={getLabPlanMarketing("professional").name}
               priceLabel={getLabPlanMarketing("professional").billingPriceLabel}
-              annualPriceHint={getLabPlanMarketing("professional").annualBillingLabel}
+              initialFeeHint={getLabPlanMarketing("professional").initialFeeNote}
               description={getLabPlanMarketing("professional").description}
               border="border-amber-200"
               currentPlan={displayPlanForCards}
               planLoading={planLoading}
               onSelect={handleSelectPlan}
-              checkoutPending={checkoutPending}
+              checkoutPlan={checkoutPlan}
               onCheckout={startStripeCheckout}
               badge={null}
               icon={<Crown className="h-5 w-5 text-amber-600" />}
@@ -296,14 +290,14 @@ function PlanCard({
   planId,
   title,
   priceLabel,
-  annualPriceHint,
+  initialFeeHint,
   description,
   border,
   currentPlan,
   planLoading,
   onSelect,
   onCheckout,
-  checkoutPending,
+  checkoutPlan,
   badge,
   icon,
   features,
@@ -311,14 +305,14 @@ function PlanCard({
   planId: "free" | "lite" | "standard" | "professional"
   title: string
   priceLabel: string
-  annualPriceHint?: string
+  initialFeeHint?: string
   description: string
   border: string
   currentPlan: Plan | null
   planLoading: boolean
   onSelect: (plan: Plan) => void
-  onCheckout?: (plan: Exclude<Plan, "free">, interval: BillingInterval) => void
-  checkoutPending?: CheckoutPending | null
+  onCheckout?: (plan: Exclude<Plan, "free">) => void
+  checkoutPlan?: Exclude<Plan, "free"> | null
   badge: string | null
   icon: ReactNode
   features: string[]
@@ -326,17 +320,10 @@ function PlanCard({
   const isCurrent = currentPlan !== null && currentPlan === planId
   const isPaid = planId !== "free"
 
-  function checkoutBusy(interval: BillingInterval) {
-    return (
-      checkoutPending?.plan === planId &&
-      checkoutPending.interval === interval
-    )
-  }
-
-  const anyCheckoutBusy = isPaid && checkoutPending?.plan === planId
+  const checkoutBusy = isPaid && checkoutPlan === planId
 
   function handlePrimaryClick() {
-    if (planLoading || isCurrent || anyCheckoutBusy) return
+    if (planLoading || isCurrent || checkoutBusy) return
     if (isPaid) return
     onSelect(planId)
   }
@@ -380,9 +367,9 @@ function PlanCard({
 
       <div className="mb-3">
         <div className="text-xl font-extrabold text-gray-900">{priceLabel}</div>
-        {annualPriceHint ? (
+        {initialFeeHint ? (
           <p className="mt-1.5 text-[11px] font-medium text-gray-600 leading-relaxed">
-            {annualPriceHint}
+            {initialFeeHint}
           </p>
         ) : null}
       </div>
@@ -399,47 +386,31 @@ function PlanCard({
       </ul>
 
       {isPaid && onCheckout ? (
-        <div className="grid gap-2">
-          <button
-            type="button"
-            onClick={() => onCheckout(planId, "month")}
-            disabled={planLoading || isCurrent || checkoutBusy("month") || checkoutBusy("year")}
-            className={[
-              "w-full rounded-lg py-2 text-xs font-semibold transition-colors flex items-center justify-center gap-2",
-              planLoading || isCurrent || checkoutBusy("month") || checkoutBusy("year")
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 text-white",
-            ].join(" ")}
-          >
-            <CreditCard className="h-3.5 w-3.5" />
-            {checkoutBusy("month") ? "処理中…" : "月払いで申し込む（Stripe）"}
-          </button>
-          <button
-            type="button"
-            onClick={() => onCheckout(planId, "year")}
-            disabled={planLoading || isCurrent || checkoutBusy("month") || checkoutBusy("year")}
-            className={[
-              "w-full rounded-lg border-2 border-blue-600 py-2 text-xs font-semibold transition-colors flex items-center justify-center gap-2",
-              planLoading || isCurrent || checkoutBusy("month") || checkoutBusy("year")
-                ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
-                : "bg-white text-blue-700 hover:bg-blue-50",
-            ].join(" ")}
-          >
-            <CreditCard className="h-3.5 w-3.5" />
-            {checkoutBusy("year") ? "処理中…" : "年払いで申し込む（2か月分お得）"}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => onCheckout(planId)}
+          disabled={planLoading || isCurrent || checkoutBusy}
+          className={[
+            "w-full rounded-lg py-2 text-xs font-semibold transition-colors flex items-center justify-center gap-2",
+            planLoading || isCurrent || checkoutBusy
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700 text-white",
+          ].join(" ")}
+        >
+          <CreditCard className="h-3.5 w-3.5" />
+          {checkoutBusy ? "処理中…" : "このプランで申し込む（Stripe）"}
+        </button>
       ) : (
         <button
           type="button"
           onClick={handlePrimaryClick}
-          disabled={planLoading || isCurrent || anyCheckoutBusy}
+          disabled={planLoading || isCurrent || checkoutBusy}
           className={[
             "w-full rounded-lg py-2 text-xs font-semibold transition-colors flex items-center justify-center gap-2",
-            planLoading || isCurrent || anyCheckoutBusy
+            planLoading || isCurrent || checkoutBusy
               ? "bg-gray-100 text-gray-400 cursor-not-allowed"
               : `bg-blue-600 hover:bg-blue-700 text-white`,
-            isCurrent && !anyCheckoutBusy && !planLoading ? "disabled:opacity-100" : "",
+            isCurrent && !checkoutBusy && !planLoading ? "disabled:opacity-100" : "",
           ].join(" ")}
         >
           <CreditCard className="h-3.5 w-3.5" />

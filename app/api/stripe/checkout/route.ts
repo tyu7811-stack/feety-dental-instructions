@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import { createClient } from "@/lib/supabase/server"
-import { isBillablePlanId, isBillingInterval } from "@/lib/stripe/catalog"
-import { checkoutLineItemForPlan } from "@/lib/stripe/line-items"
+import { isBillablePlanId } from "@/lib/stripe/catalog"
+import { checkoutLineItemsForPaidPlan } from "@/lib/stripe/line-items"
 import { getStripe } from "@/lib/stripe/server"
 
 export const runtime = "nodejs"
 
 const bodySchema = z.object({
   planId: z.string(),
-  billingInterval: z.enum(["month", "year"]).optional(),
 })
 
 function appOrigin(request: NextRequest): string {
@@ -35,8 +34,6 @@ export async function POST(request: NextRequest) {
   }
 
   const planId = parsed.data.planId
-  const rawInterval = parsed.data.billingInterval ?? "month"
-  const billingInterval = isBillingInterval(rawInterval) ? rawInterval : "month"
 
   const supabase = await createClient()
   const {
@@ -47,26 +44,38 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "認証が必要です" }, { status: 401 })
   }
 
+  const { data: subRow } = await supabase
+    .from("subscriptions")
+    .select("plan, status")
+    .eq("user_id", user.id)
+    .eq("user_type", "lab")
+    .maybeSingle()
+
+  const rowPlan = subRow?.plan != null ? String(subRow.plan) : "free"
+  const rowStatus = subRow?.status != null ? String(subRow.status) : ""
+  const alreadyOnActivePaidPlan =
+    rowStatus === "active" && isBillablePlanId(rowPlan)
+  const includeInitialFee = !alreadyOnActivePaidPlan
+
   try {
     const stripe = getStripe()
     const origin = appOrigin(request)
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
-      line_items: [checkoutLineItemForPlan(planId, billingInterval)],
+      line_items: checkoutLineItemsForPaidPlan(planId, { includeInitialFee }),
       success_url: `${origin}/lab/billing/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/lab/billing?canceled=1`,
       client_reference_id: user.id,
       metadata: {
         supabase_user_id: user.id,
         plan_id: planId,
-        billing_interval: billingInterval,
+        include_initial_fee: includeInitialFee ? "true" : "false",
       },
       subscription_data: {
         metadata: {
           supabase_user_id: user.id,
           plan_id: planId,
-          billing_interval: billingInterval,
         },
       },
       customer_email: user.email ?? undefined,

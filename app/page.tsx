@@ -7,6 +7,11 @@ import {
 } from "@/components/marketing/role-persona-marketing"
 import { feetyAppUrl } from "@/lib/feety-app-origin"
 import { labPlansMarketing } from "@/lib/content/lab-plans"
+import {
+  PLAN_CATALOG,
+  formatYenTaxIncluded,
+  initialFeeSummaryLine,
+} from "@/lib/stripe/catalog"
 import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = {
@@ -115,7 +120,11 @@ export default function HomePage() {
               技工所様向けプラン
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-muted-foreground">
-              有料プランは税込・月払いまたは年払い（2か月分相当お得）です。詳細・お申し込みは料金ページへ。
+              有料プランは税込です。{initialFeeSummaryLine()}
+              。月額はライト {formatYenTaxIncluded(PLAN_CATALOG.lite.monthlyAmountTaxIncludedJpy)}
+              ／月、スタンダード {formatYenTaxIncluded(PLAN_CATALOG.standard.monthlyAmountTaxIncludedJpy)}
+              ／月、プロ {formatYenTaxIncluded(PLAN_CATALOG.professional.monthlyAmountTaxIncludedJpy)}
+              ／月です。詳細は料金ページへ。
             </p>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {labPlansMarketing.map((p) => (
@@ -135,9 +144,9 @@ export default function HomePage() {
                     {p.priceDisplay}
                     <span className="text-xs font-normal text-muted-foreground">{p.priceNote}</span>
                   </p>
-                  {p.annualBillingLabel ? (
+                  {p.initialFeeNote ? (
                     <p className="mt-1.5 text-[11px] leading-snug text-muted-foreground">
-                      {p.annualBillingLabel}
+                      {p.initialFeeNote}
                     </p>
                   ) : null}
                 </div>

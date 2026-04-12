@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { feetyAppUrl } from "@/lib/feety-app-origin"
-import { PLAN_CATALOG } from "@/lib/stripe/catalog"
+import { INITIAL_FEE_TAX_INCLUDED_JPY, PLAN_CATALOG } from "@/lib/stripe/catalog"
 
 function yen(num: number) {
   return `${num.toLocaleString("ja-JP")}円`
@@ -66,23 +66,20 @@ export default function TokushohoPage() {
                 <ul className="space-y-1">
                   <li>フリープラン：0円／月額（お試し利用。案件5件／月まで、提携医院3件まで等の上限あり）</li>
                   <li>
-                    ライトプラン：月払い 月額 {yen(PLAN_CATALOG.lite.monthlyAmountTaxIncludedJpy)}
-                    （税込）／年払い 年額 {yen(PLAN_CATALOG.lite.annualAmountTaxIncludedJpy)}
-                    （税込・月額の10回分、2か月分相当お得）
+                    お手続き料（初回のみ・税込）：ライト・スタンダード・プロ共通 {yen(INITIAL_FEE_TAX_INCLUDED_JPY)}
                   </li>
                   <li>
-                    スタンダードプラン：月払い 月額 {yen(PLAN_CATALOG.standard.monthlyAmountTaxIncludedJpy)}
-                    （税込）／年払い 年額 {yen(PLAN_CATALOG.standard.annualAmountTaxIncludedJpy)}
-                    （税込・月額の10回分、2か月分相当お得）
+                    ライトプラン：月額利用料 {yen(PLAN_CATALOG.lite.monthlyAmountTaxIncludedJpy)}（税込／月）
                   </li>
                   <li>
-                    プロプラン：月払い 月額 {yen(PLAN_CATALOG.professional.monthlyAmountTaxIncludedJpy)}
-                    （税込）／年払い 年額 {yen(PLAN_CATALOG.professional.annualAmountTaxIncludedJpy)}
-                    （税込・月額の10回分、2か月分相当お得）
+                    スタンダードプラン：月額利用料 {yen(PLAN_CATALOG.standard.monthlyAmountTaxIncludedJpy)}（税込／月）
+                  </li>
+                  <li>
+                    プロプラン：月額利用料 {yen(PLAN_CATALOG.professional.monthlyAmountTaxIncludedJpy)}（税込／月）
                   </li>
                 </ul>
                 <p className="mt-2 text-sm text-gray-600">
-                  上記の有料プラン価格はすべて税込表示です。
+                  初回お申し込み時は、お手続き料と月額利用料を合わせて決済いただきます。2回目以降は月額利用料のみが毎月自動更新で決済されます。上記はすべて税込表示です。
                 </p>
               </dd>
             </div>
@@ -90,7 +87,7 @@ export default function TokushohoPage() {
             <div className="py-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
               <dt className="text-sm font-semibold text-gray-500">代金の支払時期</dt>
               <dd className="text-gray-900 sm:col-span-2">
-                初回申し込み時、および契約内容に応じて毎月または毎年の自動更新時
+                初回申し込み時（お手続き料＋月額）、および毎月の月額自動更新時
               </dd>
             </div>
 
