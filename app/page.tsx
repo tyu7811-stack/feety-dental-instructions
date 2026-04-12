@@ -6,6 +6,8 @@ import {
   RolePersonaCompactIntro,
 } from "@/components/marketing/role-persona-marketing"
 import { feetyAppUrl } from "@/lib/feety-app-origin"
+import { labPlansMarketing } from "@/lib/content/lab-plans"
+import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = {
   title: "FEETY | 歯科技工指示書クラウド",
@@ -103,6 +105,47 @@ export default function HomePage() {
             </div>
             <div className="mt-14">
               <RolePersonaCards layout="hero" />
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t border-border bg-muted/30 px-4 py-16 sm:px-6 sm:py-20">
+          <div className="mx-auto max-w-5xl">
+            <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">
+              技工所様向けプラン
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-muted-foreground">
+              有料は税別月額です。詳細・お申し込みは料金ページへ。
+            </p>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {labPlansMarketing.map((p) => (
+                <div
+                  key={p.id}
+                  className={cn(
+                    "rounded-2xl border-2 bg-card p-5 shadow-sm",
+                    p.popular && "ring-2 ring-foreground ring-offset-2"
+                  )}
+                >
+                  {p.popular && (
+                    <p className="mb-2 text-center text-[11px] font-bold text-foreground">人気</p>
+                  )}
+                  <p className="text-sm font-semibold text-foreground">{p.name}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{p.description}</p>
+                  <p className="mt-3 text-lg font-bold text-[#1a6cf0]">
+                    {p.priceDisplay}
+                    <span className="text-xs font-normal text-muted-foreground">{p.priceNote}</span>
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-8 flex justify-center">
+              <Link
+                href={feetyAppUrl("/plans")}
+                className="inline-flex items-center gap-2 rounded-xl bg-[#1a6cf0] px-6 py-3 text-sm font-semibold text-white shadow-md transition-colors hover:bg-[#1559cc]"
+              >
+                料金・プランの詳細を見る
+                <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
             </div>
           </div>
         </section>

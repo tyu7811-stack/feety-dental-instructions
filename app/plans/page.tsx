@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { Check, Sparkles, ArrowLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -6,79 +7,15 @@ import {
   RolePersonaCompactIntro,
 } from "@/components/marketing/role-persona-marketing"
 import { feetyAppUrl } from "@/lib/feety-app-origin"
+import { labPlansMarketing } from "@/lib/content/lab-plans"
 
-const plans = [
-  {
-    id: "free",
-    name: "フリー",
-    description: "お試し利用",
-    price: "¥0",
-    priceNote: "/ 月額",
-    color: "bg-emerald-50 border-emerald-300",
-    headerColor: "bg-emerald-700",
-    popular: false,
-    features: [
-      { name: "案件管理（5件／月まで）", included: true },
-      { name: "技工指示書の受信", included: true },
-      { name: "納品書作成", included: true },
-      { name: "提携医院（3件まで）", included: true },
-    ],
-  },
-  {
-    id: "lite",
-    name: "ライト",
-    description: "小規模技工所向け",
-    price: "¥3,980",
-    priceNote: "/ 月額（税別）",
-    color: "bg-slate-100 border-slate-300",
-    headerColor: "bg-slate-600",
-    popular: false,
-    features: [
-      { name: "案件管理（30件／月まで）", included: true },
-      { name: "技工指示書の受信", included: true },
-      { name: "納品書作成", included: true },
-      { name: "提携医院（10件まで）", included: true },
-      { name: "メールサポート", included: true },
-    ],
-  },
-  {
-    id: "standard",
-    name: "スタンダード",
-    description: "中規模技工所向け",
-    price: "¥9,800",
-    priceNote: "/ 月額（税別）",
-    color: "bg-blue-50 border-blue-400",
-    headerColor: "bg-primary",
-    popular: true,
-    features: [
-      { name: "案件管理（100件／月まで）", included: true },
-      { name: "技工指示書の受信", included: true },
-      { name: "納品書作成", included: true },
-      { name: "提携医院（30件まで）", included: true },
-      { name: "売上分析レポート", included: true },
-      { name: "優先サポート", included: true },
-    ],
-  },
-  {
-    id: "professional",
-    name: "プロ",
-    description: "大規模技工所向け",
-    price: "¥19,800",
-    priceNote: "/ 月額（税別）",
-    color: "bg-amber-50 border-amber-400",
-    headerColor: "bg-amber-600",
-    popular: false,
-    features: [
-      { name: "案件管理（無制限）", included: true },
-      { name: "技工指示書の受信", included: true },
-      { name: "納品書作成", included: true },
-      { name: "提携医院（無制限）", included: true },
-      { name: "高度な分析機能", included: true },
-      { name: "専任サポート", included: true },
-      { name: "カスタム機能相談", included: true },
-    ],
-  },
-] as const
+export const dynamic = "force-dynamic"
+
+export const metadata: Metadata = {
+  title: "料金・プラン",
+  description:
+    "FEETY 技工所向けプラン（フリー・ライト・スタンダード・プロ）の料金と機能一覧です。",
+}
 
 export default function PlansPage() {
   return (
@@ -111,27 +48,23 @@ export default function PlansPage() {
           </p>
         </div>
 
-        <div className="mb-10 mt-8">
-          <RolePersonaCompactIntro layout="plans" />
-          <div className="mt-10">
-            <RolePersonaCards layout="plans" />
-          </div>
-        </div>
-
-        <h2 className="text-center text-xl font-bold tracking-tight text-foreground mb-8">
+        <h2 className="text-center text-xl font-bold tracking-tight text-foreground mb-2">
           技工所様向けプラン
         </h2>
         <p className="text-center text-sm text-muted-foreground mb-10 max-w-2xl mx-auto">
           有料プランの表示価格は税別です。消費税は法令に従い別途ご請求いたします。
         </p>
 
-        <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-16">
-          {plans.map((plan) => (
+        <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-20">
+          {labPlansMarketing.map((plan) => (
             <div
               key={plan.id}
               className={cn(
                 "relative rounded-2xl border-2 overflow-hidden transition-transform hover:scale-[1.02]",
-                plan.color,
+                plan.id === "free" && "bg-emerald-50 border-emerald-300",
+                plan.id === "lite" && "bg-slate-100 border-slate-300",
+                plan.id === "standard" && "bg-blue-50 border-blue-400",
+                plan.id === "professional" && "bg-amber-50 border-amber-400",
                 plan.popular && "ring-2 ring-foreground ring-offset-2"
               )}
             >
@@ -141,26 +74,34 @@ export default function PlansPage() {
                 </div>
               )}
 
-              <div className={cn("px-6 py-5 text-white", plan.headerColor)}>
+              <div
+                className={cn(
+                  "px-6 py-5 text-white",
+                  plan.id === "free" && "bg-emerald-700",
+                  plan.id === "lite" && "bg-slate-600",
+                  plan.id === "standard" && "bg-primary",
+                  plan.id === "professional" && "bg-amber-600"
+                )}
+              >
                 <h2 className="text-xl font-bold">{plan.name}</h2>
                 <p className="text-sm opacity-90 mt-1">{plan.description}</p>
               </div>
 
               <div className="px-6 py-6 border-b border-border/50 bg-white/50">
                 <div className="flex flex-wrap items-baseline gap-1">
-                  <span className="text-3xl font-bold text-foreground">{plan.price}</span>
+                  <span className="text-3xl font-bold text-foreground">{plan.priceDisplay}</span>
                   <span className="text-sm text-muted-foreground">{plan.priceNote}</span>
                 </div>
               </div>
 
               <div className="px-6 py-6 bg-white/30">
                 <ul className="space-y-3">
-                  {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center gap-3">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-center gap-3">
                       <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100">
                         <Check className="h-3 w-3 text-emerald-600" />
                       </div>
-                      <span className="text-sm text-foreground">{feature.name}</span>
+                      <span className="text-sm text-foreground">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -200,6 +141,13 @@ export default function PlansPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="mb-14 border-t border-border pt-14">
+          <RolePersonaCompactIntro layout="plans" />
+          <div className="mt-10">
+            <RolePersonaCards layout="plans" />
+          </div>
         </div>
 
         <div className="max-w-3xl mx-auto">

@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react"
 import Link from "next/link"
 import { Check, CreditCard, Crown, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { getLabPlanMarketing } from "@/lib/content/lab-plans"
 
 type Plan = "free" | "lite" | "standard" | "professional"
 
@@ -127,28 +128,22 @@ export default function BillingPage() {
             {/* Free */}
             <PlanCard
               planId="free"
-              title="フリー"
-              priceLabel="¥0 / 月額"
-              description="お試し利用"
+              title={getLabPlanMarketing("free").name}
+              priceLabel={getLabPlanMarketing("free").billingPriceLabel}
+              description={getLabPlanMarketing("free").description}
               border="border-emerald-200"
               currentPlan={currentPlan}
               onSelect={handleSelectPlan}
               badge={null}
               icon={<Sparkles className="h-5 w-5 text-emerald-600" />}
-              features={[
-                "案件管理（5件／月まで）",
-                "技工指示書の受信",
-                "納品書作成",
-                "提携医院（3件まで）",
-              ]}
+              features={[...getLabPlanMarketing("free").features]}
             />
 
-            {/* Lite */}
             <PlanCard
               planId="lite"
-              title="ライト"
-              priceLabel="¥3,980 / 月（税別）"
-              description="小規模技工所向け"
+              title={getLabPlanMarketing("lite").name}
+              priceLabel={getLabPlanMarketing("lite").billingPriceLabel}
+              description={getLabPlanMarketing("lite").description}
               border="border-slate-200"
               currentPlan={currentPlan}
               onSelect={handleSelectPlan}
@@ -156,44 +151,29 @@ export default function BillingPage() {
               onCheckout={startStripeCheckout}
               badge={null}
               icon={<Sparkles className="h-5 w-5 text-slate-600" />}
-              features={[
-                "案件管理（30件／月まで）",
-                "技工指示書の受信",
-                "納品書作成",
-                "提携医院（10件まで）",
-                "メールサポート",
-              ]}
+              features={[...getLabPlanMarketing("lite").features]}
             />
 
-            {/* Standard */}
             <PlanCard
               planId="standard"
-              title="スタンダード"
-              priceLabel="¥9,800 / 月（税別）"
-              description="中規模技工所向け"
+              title={getLabPlanMarketing("standard").name}
+              priceLabel={getLabPlanMarketing("standard").billingPriceLabel}
+              description={getLabPlanMarketing("standard").description}
               border="border-primary/20"
               currentPlan={currentPlan}
               onSelect={handleSelectPlan}
               checkoutLoading={checkoutPlan === "standard"}
               onCheckout={startStripeCheckout}
-              badge="人気"
+              badge={getLabPlanMarketing("standard").popular ? "人気" : null}
               icon={<Crown className="h-5 w-5 text-primary-foreground" />}
-              features={[
-                "案件管理（100件／月まで）",
-                "技工指示書の受信",
-                "納品書作成",
-                "提携医院（30件まで）",
-                "売上分析レポート",
-                "優先サポート",
-              ]}
+              features={[...getLabPlanMarketing("standard").features]}
             />
 
-            {/* Professional */}
             <PlanCard
               planId="professional"
-              title="プロ"
-              priceLabel="¥19,800 / 月（税別）"
-              description="大規模技工所向け"
+              title={getLabPlanMarketing("professional").name}
+              priceLabel={getLabPlanMarketing("professional").billingPriceLabel}
+              description={getLabPlanMarketing("professional").description}
               border="border-amber-200"
               currentPlan={currentPlan}
               onSelect={handleSelectPlan}
@@ -201,15 +181,7 @@ export default function BillingPage() {
               onCheckout={startStripeCheckout}
               badge={null}
               icon={<Crown className="h-5 w-5 text-amber-600" />}
-              features={[
-                "案件管理（無制限）",
-                "技工指示書の受信",
-                "納品書作成",
-                "提携医院（無制限）",
-                "高度な分析機能",
-                "専任サポート",
-                "カスタム機能相談",
-              ]}
+              features={[...getLabPlanMarketing("professional").features]}
             />
           </div>
 
