@@ -12,7 +12,7 @@ alwaysApply: true
 1. `git status` で変更を確認する。
 2. 意味のあるまとまりごとに `git add` → `git commit -m "..."`（日本語または英語で内容が分かるメッセージ）。
 3. `git push origin main` を実行する。
-4. 本番 URL は **https://feety-dental-instructions.vercel.app**（デプロイ完了は Vercel ダッシュボードの Deployments で確認）。
+4. 本番 URL は **https://www.seo-oji.space**（デプロイ完了は Vercel ダッシュボードの Deployments で確認）。
 
 ## 例外（push しない）
 
