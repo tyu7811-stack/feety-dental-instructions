@@ -12,16 +12,51 @@ export default function BillingPage() {
   const STORAGE_KEY = "v0.billing.currentPlan"
 
   const [currentPlan, setCurrentPlan] = useState<Plan>("free")
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null)
+  const [planLoading, setPlanLoading] = useState(true)
   const [checkoutPlan, setCheckoutPlan] = useState<Plan | null>(null)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
   useEffect(() => {
-    const savedPlan = window.localStorage.getItem(STORAGE_KEY)
-    // 旧キー互換：premium を標準（standard）にマッピング
-    if (savedPlan === "free") setCurrentPlan("free")
-    else if (savedPlan === "lite") setCurrentPlan("lite")
-    else if (savedPlan === "premium" || savedPlan === "standard") setCurrentPlan("standard")
-    else if (savedPlan === "professional") setCurrentPlan("professional")
+    let cancelled = false
+    ;(async () => {
+      try {
+        const res = await fetch("/api/lab/subscription")
+        const data = (await res.json()) as {
+          plan?: Plan
+          status?: string
+          error?: string
+        }
+        if (cancelled) return
+        if (res.ok && data.plan) {
+          setCurrentPlan(data.plan)
+          setSubscriptionStatus(data.status ?? null)
+          window.localStorage.setItem(STORAGE_KEY, data.plan)
+          return
+        }
+        const saved = window.localStorage.getItem(STORAGE_KEY)
+        if (saved === "free") setCurrentPlan("free")
+        else if (saved === "lite") setCurrentPlan("lite")
+        else if (saved === "premium" || saved === "standard") setCurrentPlan("standard")
+        else if (saved === "professional") setCurrentPlan("professional")
+        if (data.error) {
+          setCheckoutError(data.error)
+        }
+      } catch {
+        if (!cancelled) {
+          const saved = window.localStorage.getItem(STORAGE_KEY)
+          if (saved === "free") setCurrentPlan("free")
+          else if (saved === "lite") setCurrentPlan("lite")
+          else if (saved === "premium" || saved === "standard") setCurrentPlan("standard")
+          else if (saved === "professional") setCurrentPlan("professional")
+        }
+      } finally {
+        if (!cancelled) setPlanLoading(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   useEffect(() => {
@@ -31,7 +66,16 @@ export default function BillingPage() {
     }
   }, [])
 
+  const displayPlanForCards: Plan | null = planLoading ? null : currentPlan
+
   function handleSelectPlan(nextPlan: Plan) {
+    if (nextPlan === "free" && currentPlan !== "free") {
+      setCheckoutError(
+        "有料プランの解約・ダウングレードは Stripe のお客様ポータルまたは窓口までお問い合わせください。"
+      )
+      return
+    }
+    setCheckoutError(null)
     setCurrentPlan(nextPlan)
     window.localStorage.setItem(STORAGE_KEY, nextPlan)
   }
@@ -71,7 +115,8 @@ export default function BillingPage() {
             プラン・お支払い
           </h1>
           <p className="mt-2 text-sm sm:text-base text-gray-500">
-            技工所様向けプランです。フリーはお試し利用（案件・医院数に上限あり）。有料は税別月額で、Stripe Checkout より決済します。
+            技工所様向けプランです。フリーはお試し利用（案件・医院数に上限あり）。有料は税別月額で、Stripe Checkout
+            で決済します。お支払い完了後は Stripe Webhook により Supabase の契約情報が更新され、本ページの「現在のプラン」に反映されます。
           </p>
           {checkoutError && (
             <p className="mt-2 text-sm text-red-600" role="alert">
@@ -90,14 +135,27 @@ export default function BillingPage() {
               <div className="min-w-0">
                 <p className="text-xs sm:text-sm text-sky-800/80">現在のプラン</p>
                 <p className="text-sm sm:text-base font-bold text-sky-900 truncate">
-                  {currentPlan === "free"
-                    ? "フリー（お試し利用）"
-                    : currentPlan === "lite"
-                      ? "ライト"
-                      : currentPlan === "standard"
-                        ? "スタンダード"
-                        : "プロ"}
+                  {planLoading
+                    ? "取得中…"
+                    : currentPlan === "free"
+                      ? "フリー（お試し利用）"
+                      : currentPlan === "lite"
+                        ? "ライト"
+                        : currentPlan === "standard"
+                          ? "スタンダード"
+                          : "プロ"}
                 </p>
+                {!planLoading && subscriptionStatus && subscriptionStatus !== "active" && (
+                  <p className="mt-1 text-xs text-amber-800">
+                    契約状態:{" "}
+                    {subscriptionStatus === "cancelled"
+                      ? "解約済み"
+                      : subscriptionStatus === "pending_deletion"
+                        ? "削除予定"
+                        : subscriptionStatus}
+                    （有料機能は制限される場合があります）
+                  </p>
+                )}
               </div>
             </div>
             <div className="hidden sm:flex items-center gap-2 text-xs text-sky-800/70">
@@ -132,7 +190,8 @@ export default function BillingPage() {
               priceLabel={getLabPlanMarketing("free").billingPriceLabel}
               description={getLabPlanMarketing("free").description}
               border="border-emerald-200"
-              currentPlan={currentPlan}
+              currentPlan={displayPlanForCards}
+              planLoading={planLoading}
               onSelect={handleSelectPlan}
               badge={null}
               icon={<Sparkles className="h-5 w-5 text-emerald-600" />}
@@ -145,7 +204,8 @@ export default function BillingPage() {
               priceLabel={getLabPlanMarketing("lite").billingPriceLabel}
               description={getLabPlanMarketing("lite").description}
               border="border-slate-200"
-              currentPlan={currentPlan}
+              currentPlan={displayPlanForCards}
+              planLoading={planLoading}
               onSelect={handleSelectPlan}
               checkoutLoading={checkoutPlan === "lite"}
               onCheckout={startStripeCheckout}
@@ -160,7 +220,8 @@ export default function BillingPage() {
               priceLabel={getLabPlanMarketing("standard").billingPriceLabel}
               description={getLabPlanMarketing("standard").description}
               border="border-primary/20"
-              currentPlan={currentPlan}
+              currentPlan={displayPlanForCards}
+              planLoading={planLoading}
               onSelect={handleSelectPlan}
               checkoutLoading={checkoutPlan === "standard"}
               onCheckout={startStripeCheckout}
@@ -175,7 +236,8 @@ export default function BillingPage() {
               priceLabel={getLabPlanMarketing("professional").billingPriceLabel}
               description={getLabPlanMarketing("professional").description}
               border="border-amber-200"
-              currentPlan={currentPlan}
+              currentPlan={displayPlanForCards}
+              planLoading={planLoading}
               onSelect={handleSelectPlan}
               checkoutLoading={checkoutPlan === "professional"}
               onCheckout={startStripeCheckout}
@@ -225,6 +287,7 @@ function PlanCard({
   description,
   border,
   currentPlan,
+  planLoading,
   onSelect,
   onCheckout,
   checkoutLoading = false,
@@ -237,7 +300,8 @@ function PlanCard({
   priceLabel: string
   description: string
   border: string
-  currentPlan: Plan
+  currentPlan: Plan | null
+  planLoading: boolean
   onSelect: (plan: Plan) => void
   onCheckout?: (plan: Exclude<Plan, "free">) => void
   checkoutLoading?: boolean
@@ -245,19 +309,21 @@ function PlanCard({
   icon: ReactNode
   features: string[]
 }) {
-  const isCurrent = currentPlan === planId
+  const isCurrent = currentPlan !== null && currentPlan === planId
   const isPaid = planId !== "free"
 
-  const buttonLabel = checkoutLoading
-    ? "処理中…"
-    : isCurrent
-      ? "現在のプラン"
-      : isPaid
-        ? "選択する（Stripe）"
-        : "このプランにする"
+  const buttonLabel = planLoading
+    ? "取得中…"
+    : checkoutLoading
+      ? "処理中…"
+      : isCurrent
+        ? "現在のプラン"
+        : isPaid
+          ? "選択する（Stripe）"
+          : "このプランにする"
 
   function handlePrimaryClick() {
-    if (isCurrent || checkoutLoading) return
+    if (planLoading || isCurrent || checkoutLoading) return
     if (planId !== "free" && onCheckout) {
       onCheckout(planId)
       return
@@ -314,13 +380,13 @@ function PlanCard({
       <button
         type="button"
         onClick={handlePrimaryClick}
-        disabled={isCurrent || checkoutLoading}
+        disabled={planLoading || isCurrent || checkoutLoading}
         className={[
           "w-full rounded-lg py-2 text-xs font-semibold transition-colors flex items-center justify-center gap-2",
-          isCurrent || checkoutLoading
+          planLoading || isCurrent || checkoutLoading
             ? "bg-gray-100 text-gray-400 cursor-not-allowed"
             : `bg-blue-600 hover:bg-blue-700 text-white`,
-          isCurrent && !checkoutLoading ? "disabled:opacity-100" : "",
+          isCurrent && !checkoutLoading && !planLoading ? "disabled:opacity-100" : "",
         ].join(" ")}
       >
         <CreditCard className="h-3.5 w-3.5" />

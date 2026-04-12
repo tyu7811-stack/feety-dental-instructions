@@ -55,6 +55,18 @@ export default function PlansPage() {
           有料プランの表示価格は税別です。消費税は法令に従い別途ご請求いたします。
         </p>
 
+        <p className="text-center text-sm text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed">
+          有料プランのお支払いは、
+          <Link href={feetyAppUrl("/signup2")} className="text-primary underline-offset-2 hover:underline">
+            技工所の新規登録
+          </Link>
+          後にログインし、
+          <Link href={feetyAppUrl("/lab/billing")} className="text-primary underline-offset-2 hover:underline">
+            プラン・お支払い
+          </Link>
+          から Stripe Checkout（クレジットカード）でまとめてお手続きください。
+        </p>
+
         <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-20">
           {labPlansMarketing.map((plan) => (
             <div

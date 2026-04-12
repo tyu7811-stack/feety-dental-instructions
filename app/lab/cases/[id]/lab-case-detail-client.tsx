@@ -9,6 +9,7 @@ import { StatusBadge } from "@/components/shared/status-badge"
 import { DeliveryNoteModal } from "@/components/lab/delivery-note-modal"
 import { InvoiceModal } from "@/components/lab/invoice-modal"
 import type { CaseStatus, Case } from "@/lib/types"
+import type { LabSubscriptionSnapshot } from "@/lib/subscription/lab-subscription"
 import {
   ArrowLeft,
   FileText,
@@ -37,12 +38,14 @@ export function LabCaseDetailClient({
   clinicName,
   clinicDoctorName,
   documents,
+  labSubscription,
   disableMockPricing,
 }: {
   caseData: Case
   clinicName: string
   clinicDoctorName: string
   documents: LabCaseDocumentVM[]
+  labSubscription: LabSubscriptionSnapshot
   disableMockPricing?: boolean
 }) {
   return (
@@ -52,6 +55,7 @@ export function LabCaseDetailClient({
         clinicName={clinicName}
         clinicDoctorName={clinicDoctorName}
         documents={documents}
+        labSubscription={labSubscription}
         disableMockPricing={disableMockPricing}
       />
     </Suspense>
@@ -63,12 +67,14 @@ function LabCaseDetailInner({
   clinicName,
   clinicDoctorName,
   documents,
+  labSubscription,
   disableMockPricing,
 }: {
   caseData: Case
   clinicName: string
   clinicDoctorName: string
   documents: LabCaseDocumentVM[]
+  labSubscription: LabSubscriptionSnapshot
   disableMockPricing?: boolean
 }) {
   const router = useRouter()
@@ -88,6 +94,11 @@ function LabCaseDetailInner({
   const [showInvoiceModal, setShowInvoiceModal] = useState(false)
   const [copyFeedback, setCopyFeedback] = useState("")
   const [statusError, setStatusError] = useState("")
+
+  const isPublicDemo =
+    searchParams.get("demo") === "true" || searchParams.get("test") === "true"
+  const canUseInvoice =
+    isPublicDemo || labSubscription.canGenerateInvoice
 
   const displayStatus = currentStatus || caseData.status
   const currentIdx = flowIndex(STATUS_FLOW, displayStatus)
@@ -384,13 +395,30 @@ ${caseData.notes ? `備考: ${caseData.notes}` : ""}`
               </button>
               <button
                 type="button"
-                onClick={() => setShowInvoiceModal(true)}
-                className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-bold text-foreground hover:bg-accent transition-colors active:scale-[0.97]"
+                onClick={() => canUseInvoice && setShowInvoiceModal(true)}
+                disabled={!canUseInvoice}
+                title={
+                  canUseInvoice
+                    ? undefined
+                    : "ライト以上のプランでご利用いただけます"
+                }
+                className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-bold text-foreground hover:bg-accent transition-colors active:scale-[0.97] disabled:pointer-events-none disabled:opacity-45"
               >
                 <FileText className="h-4 w-4" />
                 請求書を生成
               </button>
             </div>
+            {!canUseInvoice && (
+              <p className="text-[11px] text-muted-foreground">
+                請求書の発行は有料プラン（ライト以上）が必要です。{" "}
+                <Link
+                  href={`/lab/billing${labNavQuery}`}
+                  className="font-medium text-primary underline-offset-2 hover:underline"
+                >
+                  プラン・お支払い
+                </Link>
+              </p>
+            )}
             <p className="text-[11px] text-muted-foreground">
               USBメモリに保存は保存ボタンから
             </p>

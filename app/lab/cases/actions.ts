@@ -3,6 +3,8 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import type { Case } from "@/lib/types"
+import type { LabSubscriptionSnapshot } from "@/lib/subscription/lab-subscription"
+import { fetchLabSubscriptionSnapshot } from "@/lib/subscription/lab-subscription"
 
 // 技工所の案件一覧を取得
 export async function getLabCases() {
@@ -64,6 +66,7 @@ export async function getLabCaseBundle(caseId: string): Promise<{
   clinicName: string
   clinicDoctorName: string
   documents: LabCaseDocumentVM[]
+  labSubscription: LabSubscriptionSnapshot
 } | null> {
   const supabase = await createClient()
   const {
@@ -120,11 +123,14 @@ export async function getLabCaseBundle(caseId: string): Promise<{
     dueDate: row.delivery_date,
   }
 
+  const labSubscription = await fetchLabSubscriptionSnapshot(supabase, user.id)
+
   return {
     caseData,
     clinicName: clinic?.name ?? "—",
     clinicDoctorName: clinic?.doctor_name ?? "—",
     documents,
+    labSubscription,
   }
 }
 

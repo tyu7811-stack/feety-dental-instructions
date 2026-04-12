@@ -19,6 +19,7 @@ export default async function LabCaseDetailPage({
       clinicName={bundle.clinicName}
       clinicDoctorName={bundle.clinicDoctorName}
       documents={bundle.documents}
+      labSubscription={bundle.labSubscription}
       disableMockPricing
     />
   )
