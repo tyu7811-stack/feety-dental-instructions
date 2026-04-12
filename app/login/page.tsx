@@ -378,8 +378,16 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          <p className="mt-8 text-center text-xs text-muted-foreground">
-            ログインすることで、利用規約およびプライバシーポリシーに同意したものとみなされます
+          <p className="mt-8 text-center text-xs text-muted-foreground leading-relaxed">
+            ログインすることで、
+            <Link href={feetyAppUrl("/legal/terms")} className="text-[#1a6cf0] hover:underline">
+              利用規約
+            </Link>
+            および
+            <Link href={feetyAppUrl("/legal/privacy")} className="text-[#1a6cf0] hover:underline">
+              プライバシーポリシー
+            </Link>
+            に同意したものとみなされます
           </p>
         </div>
       </div>

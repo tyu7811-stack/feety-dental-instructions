@@ -192,6 +192,10 @@ export default function PlansPage() {
                     <Link href={feetyAppUrl("/legal/terms")} className="text-primary underline hover:no-underline">
                       利用規約
                     </Link>
+                    、
+                    <Link href={feetyAppUrl("/legal/privacy")} className="text-primary underline hover:no-underline">
+                      プライバシーポリシー
+                    </Link>
                     および
                     <Link href={feetyAppUrl("/legal/tokushoho")} className="text-primary underline hover:no-underline">
                       特定商取引法に基づく表記
@@ -272,9 +276,12 @@ export default function PlansPage() {
               tyu66457@gmail.com
             </a>
           </p>
-          <div className="mt-3 flex justify-center gap-4">
+          <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1">
             <Link href={feetyAppUrl("/legal/terms")} className="hover:text-foreground transition-colors">
               利用規約
+            </Link>
+            <Link href={feetyAppUrl("/legal/privacy")} className="hover:text-foreground transition-colors">
+              プライバシーポリシー
             </Link>
             <Link href={feetyAppUrl("/legal/tokushoho")} className="hover:text-foreground transition-colors">
               特定商取引法に基づく表記

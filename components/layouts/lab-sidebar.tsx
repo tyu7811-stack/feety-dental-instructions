@@ -19,6 +19,7 @@ import {
   Scale,
   ScrollText,
   CreditCard,
+  Shield,
 } from "lucide-react"
 
 const navItems = [
@@ -170,6 +171,13 @@ function LabSidebarContent() {
           >
             <ScrollText className="h-3.5 w-3.5" />
             利用規約
+          </Link>
+          <Link
+            href="/legal/privacy"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-xs font-medium text-sidebar-foreground/50 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
+          >
+            <Shield className="h-3.5 w-3.5" />
+            プライバシーポリシー
           </Link>
           <Link
             href="/legal/tokushoho"

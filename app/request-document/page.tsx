@@ -137,6 +137,9 @@ export default function RequestDocumentPage() {
               <Link href={feetyAppUrl("/legal/terms")} className="hover:text-foreground">
                 利用規約
               </Link>
+              <Link href={feetyAppUrl("/legal/privacy")} className="hover:text-foreground">
+                プライバシーポリシー
+              </Link>
               <Link href={feetyAppUrl("/legal/tokushoho")} className="hover:text-foreground">
                 特定商取引法に基づく表記
               </Link>
@@ -365,6 +368,9 @@ export default function RequestDocumentPage() {
           <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1">
             <Link href={feetyAppUrl("/legal/terms")} className="hover:text-foreground">
               利用規約
+            </Link>
+            <Link href={feetyAppUrl("/legal/privacy")} className="hover:text-foreground">
+              プライバシーポリシー
             </Link>
             <Link href={feetyAppUrl("/legal/tokushoho")} className="hover:text-foreground">
               特定商取引法に基づく表記

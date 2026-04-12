@@ -413,6 +413,15 @@ export default function RegisterPage() {
                 >
                   特定商取引法に基づく表記
                 </Link>
+                、
+                <Link
+                  href={feetyAppUrl("/legal/privacy")}
+                  className="text-[#1a6cf0] hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  プライバシーポリシー
+                </Link>
                 に同意します
               </label>
             </div>

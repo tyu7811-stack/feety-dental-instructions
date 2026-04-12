@@ -172,6 +172,9 @@ export default function HomePage() {
             <Link href={feetyAppUrl("/legal/terms")} className="hover:text-foreground">
               利用規約
             </Link>
+            <Link href={feetyAppUrl("/legal/privacy")} className="hover:text-foreground">
+              プライバシーポリシー
+            </Link>
             <Link href={feetyAppUrl("/legal/tokushoho")} className="hover:text-foreground">
               特定商取引法に基づく表記
             </Link>

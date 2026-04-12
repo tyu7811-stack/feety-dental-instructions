@@ -114,6 +114,9 @@ export default function TokushohoPage() {
           <Link href={feetyAppUrl("/legal/terms")} className="text-blue-600 hover:underline">
             利用規約
           </Link>
+          <Link href={feetyAppUrl("/legal/privacy")} className="text-blue-600 hover:underline">
+            プライバシーポリシー
+          </Link>
         </div>
       </div>
     </div>

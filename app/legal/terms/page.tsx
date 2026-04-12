@@ -132,6 +132,9 @@ export default function TermsPage() {
               <Link href={feetyAppUrl("/plans")} className="text-blue-600 hover:underline">
                 料金・プラン
               </Link>
+              <Link href={feetyAppUrl("/legal/privacy")} className="text-blue-600 hover:underline">
+                プライバシーポリシー
+              </Link>
               <Link href={feetyAppUrl("/legal/tokushoho")} className="text-blue-600 hover:underline">
                 特定商取引法に基づく表記
               </Link>

@@ -211,7 +211,10 @@ export default function BillingPage() {
           </div>
 
           <div className="mt-5 text-xs text-gray-500">
-            参考：<Link href="/legal/terms" className="text-primary hover:underline">利用規約</Link>
+            参考：
+            <Link href="/legal/terms" className="text-primary hover:underline">利用規約</Link>
+            {" / "}
+            <Link href="/legal/privacy" className="text-primary hover:underline">プライバシーポリシー</Link>
             {" / "}
             <Link href="/legal/tokushoho" className="text-primary hover:underline">特定商取引法に基づく表記</Link>
           </div>
@@ -222,6 +225,10 @@ export default function BillingPage() {
           <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-400">
             <Link href="/legal/terms" className="hover:text-gray-600 transition-colors">
               利用規約
+            </Link>
+            <span>|</span>
+            <Link href="/legal/privacy" className="hover:text-gray-600 transition-colors">
+              プライバシーポリシー
             </Link>
             <span>|</span>
             <Link href="/legal/tokushoho" className="hover:text-gray-600 transition-colors">
