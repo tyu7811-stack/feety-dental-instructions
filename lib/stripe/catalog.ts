@@ -9,9 +9,9 @@ export interface PlanCatalogEntry {
 
 /** サーバー側の単一の価格ソース（フロントの表示と独立） */
 export const PLAN_CATALOG: Record<BillablePlanId, PlanCatalogEntry> = {
-  lite: { name: "FEETY ライト", amountJpy: 2_000 },
-  standard: { name: "FEETY スタンダード", amountJpy: 12_000 },
-  professional: { name: "FEETY プロフェッショナル", amountJpy: 39_800 },
+  lite: { name: "FEETY ライト", amountJpy: 2_980 },
+  standard: { name: "FEETY スタンダード", amountJpy: 9_800 },
+  professional: { name: "FEETY プロ", amountJpy: 19_800 },
 }
 
 export function isBillablePlanId(v: string): v is BillablePlanId {

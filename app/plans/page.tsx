@@ -5,14 +5,32 @@ import {
   RolePersonaCards,
   RolePersonaCompactIntro,
 } from "@/components/marketing/role-persona-marketing"
+import { feetyAppUrl } from "@/lib/feety-app-origin"
 
 const plans = [
+  {
+    id: "free",
+    name: "フリー",
+    description: "まずはお試し",
+    price: "¥0",
+    priceNote: "税込み／14日間のお試しのみ。その後は機能制限があります。",
+    color: "bg-emerald-50 border-emerald-300",
+    headerColor: "bg-emerald-700",
+    popular: false,
+    features: [
+      { name: "お試し期間14日間", included: true },
+      { name: "期間終了後は機能制限", included: true },
+      { name: "案件管理", included: true },
+      { name: "技工指示書の基本作成", included: true },
+      { name: "有料プランへのアップグレード", included: true },
+    ],
+  },
   {
     id: "lite",
     name: "ライト",
     description: "小規模な技工所・医院向け",
-    price: "¥2,000",
-    priceNote: "/ 月額（税別）",
+    price: "¥2,980",
+    priceNote: "税込み／月",
     color: "bg-slate-100 border-slate-300",
     headerColor: "bg-slate-600",
     popular: false,
@@ -33,8 +51,8 @@ const plans = [
     id: "standard",
     name: "スタンダード",
     description: "成長中の技工所・医院向け",
-    price: "¥12,000",
-    priceNote: "/ 月額（税別）",
+    price: "¥9,800",
+    priceNote: "税込み／月",
     color: "bg-blue-50 border-blue-400",
     headerColor: "bg-primary",
     popular: true,
@@ -53,10 +71,10 @@ const plans = [
   },
   {
     id: "professional",
-    name: "プロフェッショナル",
+    name: "プロ",
     description: "大規模な技工所・医院向け",
-    price: "¥39,800",
-    priceNote: "/ 月額（税別）",
+    price: "¥19,800",
+    priceNote: "税込み／月",
     color: "bg-amber-50 border-amber-400",
     headerColor: "bg-amber-600",
     popular: false,
@@ -73,38 +91,36 @@ const plans = [
       { name: "優先サポート", included: true },
     ],
   },
-]
+] as const
 
 export default function PlansPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      {/* Header */}
       <header className="border-b border-border bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
+        <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between gap-4">
           <Link
-            href="/"
+            href={feetyAppUrl("/")}
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            ログイン画面に戻る
+            ホームへ戻る
           </Link>
-          <p className="text-xs text-muted-foreground">
-            開発・運営：ナチュラルアート（システムオーナー）
-          </p>
+          <div className="text-right text-xs text-muted-foreground">
+            <p>販売者・問い合わせ窓口：ナチュラルアート</p>
+            <a href="mailto:tyu66457@gmail.com" className="hover:text-foreground underline-offset-2 hover:underline">
+              tyu66457@gmail.com
+            </a>
+          </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-12">
-        {/* Title */}
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            プラン詳細
+            料金・プラン
           </h1>
           <p className="mt-3 text-muted-foreground">
-            技工指示書自動化システムの料金プランをご確認ください
-          </p>
-          <p className="mt-2 text-sm text-amber-600 font-medium">
-            ※ ライトプラン・スタンダードプランは、1医院増えるごとに +¥2,000/月
+            FEETY（歯科技工指示書クラウド）の料金プランをご確認ください
           </p>
         </div>
 
@@ -115,8 +131,7 @@ export default function PlansPage() {
           </div>
         </div>
 
-        {/* Plans Grid */}
-        <div className="grid md:grid-cols-3 gap-6 mb-16">
+        <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-16">
           {plans.map((plan) => (
             <div
               key={plan.id}
@@ -126,28 +141,24 @@ export default function PlansPage() {
                 plan.popular && "ring-2 ring-primary ring-offset-2"
               )}
             >
-              {/* Popular badge */}
               {plan.popular && (
                 <div className="absolute top-4 right-4 bg-primary text-primary-foreground text-xs font-bold px-2.5 py-1 rounded-full">
                   おすすめ
                 </div>
               )}
 
-              {/* Header */}
               <div className={cn("px-6 py-5 text-white", plan.headerColor)}>
                 <h2 className="text-xl font-bold">{plan.name}</h2>
                 <p className="text-sm opacity-90 mt-1">{plan.description}</p>
               </div>
 
-              {/* Price */}
               <div className="px-6 py-6 border-b border-border/50 bg-white/50">
-                <div className="flex items-baseline gap-1">
+                <div className="flex flex-wrap items-baseline gap-1">
                   <span className="text-3xl font-bold text-foreground">{plan.price}</span>
                   <span className="text-sm text-muted-foreground">{plan.priceNote}</span>
                 </div>
               </div>
 
-              {/* Features */}
               <div className="px-6 py-6 bg-white/30">
                 <ul className="space-y-3">
                   {plan.features.map((feature, idx) => (
@@ -174,33 +185,36 @@ export default function PlansPage() {
                 </ul>
               </div>
 
-              {/* CTA */}
               <div className="px-6 py-5 bg-white/50">
-                {plan.id !== "lite" && (
+                {plan.id !== "free" && (
                   <p className="mb-3 text-xs text-muted-foreground leading-relaxed">
                     お支払い前に、
-                    <Link href="/legal/terms" className="text-primary underline hover:no-underline">利用規約</Link>
+                    <Link href={feetyAppUrl("/legal/terms")} className="text-primary underline hover:no-underline">
+                      利用規約
+                    </Link>
                     および
-                    <Link href="/legal/tokushoho" className="text-primary underline hover:no-underline">特定商取引法に基づく表記</Link>
+                    <Link href={feetyAppUrl("/legal/tokushoho")} className="text-primary underline hover:no-underline">
+                      特定商取引法に基づく表記
+                    </Link>
                     を必ずご確認ください。ボタンを押すことで、これらに同意したものとみなされます。
                   </p>
                 )}
-                <button
+                <Link
+                  href={feetyAppUrl("/signup2")}
                   className={cn(
-                    "w-full rounded-lg py-2.5 text-sm font-semibold transition-colors",
+                    "flex w-full items-center justify-center rounded-lg py-2.5 text-sm font-semibold transition-colors",
                     plan.popular
                       ? "bg-primary text-primary-foreground hover:bg-primary/90"
                       : "bg-foreground/10 text-foreground hover:bg-foreground/20"
                   )}
                 >
-                  {plan.id === "lite" ? "現在のプラン" : "このプランを選択"}
-                </button>
+                  {plan.id === "free" ? "無料で始める" : "このプランで申し込む"}
+                </Link>
               </div>
             </div>
           ))}
         </div>
 
-        {/* FAQ Section */}
         <div className="max-w-3xl mx-auto">
           <h2 className="text-xl font-bold text-center mb-8">よくある質問</h2>
           <div className="space-y-4">
@@ -211,38 +225,37 @@ export default function PlansPage() {
               </p>
             </div>
             <div className="rounded-xl border border-border bg-card p-5">
-              <h3 className="font-semibold text-foreground mb-2">無料トライアルはありますか？</h3>
+              <h3 className="font-semibold text-foreground mb-2">フリー（¥0）プランの「14日間のお試し」とは？</h3>
               <p className="text-sm text-muted-foreground">
-                スタンダードプランとプロフェッショナルプランには14日間の無料トライアルがあります。クレジットカードの登録なしでお試しいただけます。
+                フリープランは税込0円で、初回ご利用から14日間はお試しとしてご利用いただけます。14日間を過ぎると機能制限がかかります。制限のない利用には、ライト・スタンダード・プロの各プランをご検討ください。
               </p>
             </div>
             <div className="rounded-xl border border-border bg-card p-5">
               <h3 className="font-semibold text-foreground mb-2">支払い方法は何がありますか？</h3>
               <p className="text-sm text-muted-foreground">
-                クレジットカード（VISA、MasterCard、JCB、American Express）、銀行振込に対応しています。年払いの場合は2ヶ月分お得になります。
+                有料プランは Stripe Checkout（クレジットカード）でのお支払いに対応しています。
               </p>
             </div>
           </div>
         </div>
 
-        {/* Contact */}
         <div className="mt-16 text-center rounded-2xl border border-border bg-card p-8">
           <h2 className="text-lg font-bold text-foreground mb-2">
             ご不明な点がございましたら
           </h2>
           <p className="text-sm text-muted-foreground mb-4">
-            導入のご相談やお見積りなど、お気軽にお問い合わせください
+            販売者・問い合わせ窓口：ナチュラルアート（tyu66457@gmail.com）
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/contact"
+            <a
+              href="mailto:tyu66457@gmail.com"
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
             >
               <Sparkles className="h-4 w-4" />
-              お問い合わせ
-            </Link>
+              メールでお問い合わせ
+            </a>
             <Link
-              href="/request-document"
+              href={feetyAppUrl("/request-document")}
               className="inline-flex items-center justify-center gap-2 rounded-lg border border-border px-6 py-2.5 text-sm font-semibold text-foreground hover:bg-accent transition-colors"
             >
               資料請求
@@ -251,19 +264,23 @@ export default function PlansPage() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="border-t border-border bg-muted/30 mt-16">
         <div className="mx-auto max-w-6xl px-4 py-6 text-center text-xs text-muted-foreground">
-          <p>開発・運営：ナチュラルアート（システムオーナー）</p>
+          <p>販売者・問い合わせ窓口：ナチュラルアート</p>
+          <p className="mt-1">
+            <a href="mailto:tyu66457@gmail.com" className="hover:text-foreground underline-offset-2 hover:underline">
+              tyu66457@gmail.com
+            </a>
+          </p>
           <div className="mt-3 flex justify-center gap-4">
-            <Link href="/legal/terms" className="hover:text-foreground transition-colors">
+            <Link href={feetyAppUrl("/legal/terms")} className="hover:text-foreground transition-colors">
               利用規約
             </Link>
-            <Link href="/legal/tokushoho" className="hover:text-foreground transition-colors">
+            <Link href={feetyAppUrl("/legal/tokushoho")} className="hover:text-foreground transition-colors">
               特定商取引法に基づく表記
             </Link>
           </div>
-          <p className="mt-3">© 2026 技工指示書自動化システム. All rights reserved.</p>
+          <p className="mt-3">© 2026 FEETY. All rights reserved.</p>
         </div>
       </footer>
     </div>

@@ -37,10 +37,10 @@ export default function TokushohoPage() {
             </div>
 
             <div className="py-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <dt className="text-sm font-semibold text-gray-500">連絡先（メール）</dt>
+              <dt className="text-sm font-semibold text-gray-500">連絡先（メール）／問い合わせ窓口</dt>
               <dd className="text-gray-900 sm:col-span-2">
-                <a href="mailto:0369tyu@gmail.com" className="text-blue-600 hover:underline">
-                  0369tyu@gmail.com
+                <a href="mailto:tyu66457@gmail.com" className="text-blue-600 hover:underline">
+                  tyu66457@gmail.com
                 </a>
               </dd>
             </div>
@@ -58,17 +58,11 @@ export default function TokushohoPage() {
               <dt className="text-sm font-semibold text-gray-500">販売価格</dt>
               <dd className="text-gray-900 sm:col-span-2">
                 <ul className="space-y-1">
-                  <li>ライトプラン：月額 2,000円（税込）</li>
-                  <li>スタンダードプラン：月額 12,000円（税込）</li>
-                  <li>プロフェッショナルプラン：月額 39,800円（税込）</li>
+                  <li>フリープラン：0円（税込）／初回から14日間のお試し利用のみ。終了後は機能制限があります。</li>
+                  <li>ライトプラン：月額 2,980円（税込）</li>
+                  <li>スタンダードプラン：月額 9,800円（税込）</li>
+                  <li>プロプラン：月額 19,800円（税込）</li>
                 </ul>
-              </dd>
-            </div>
-
-            <div className="py-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <dt className="text-sm font-semibold text-gray-500">初期導入費用</dt>
-              <dd className="text-gray-900 sm:col-span-2">
-                全プラン共通：初回のみ 50,000円（税込）
               </dd>
             </div>
 
@@ -104,7 +98,7 @@ export default function TokushohoPage() {
 
           <div className="mt-10 border-t border-gray-200 pt-6">
             <p className="text-center text-xs text-gray-500">
-              最終更新日：2026年3月21日
+              最終更新日：2026年4月12日
             </p>
           </div>
         </div>

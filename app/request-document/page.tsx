@@ -336,8 +336,13 @@ export default function RequestDocumentPage() {
       {/* Footer */}
       <footer className="border-t border-border bg-muted/30 mt-16">
         <div className="mx-auto max-w-4xl px-4 py-6 text-center text-xs text-muted-foreground">
-          <p>開発・運営：ナチュラルアート（システムオーナー）</p>
-          <p className="mt-1">© 2026 技工指示書自動化システム. All rights reserved.</p>
+          <p>販売者・問い合わせ窓口：ナチュラルアート</p>
+          <p className="mt-1">
+            <a href="mailto:tyu66457@gmail.com" className="hover:text-foreground underline-offset-2 hover:underline">
+              tyu66457@gmail.com
+            </a>
+          </p>
+          <p className="mt-2">© 2026 FEETY. All rights reserved.</p>
         </div>
       </footer>
     </div>

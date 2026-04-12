@@ -69,7 +69,7 @@ export default function BillingPage() {
             プラン・お支払い
           </h1>
           <p className="mt-2 text-sm sm:text-base text-gray-500">
-            無料プランはこの画面で切り替え。有料プランは Stripe Checkout（サブスクリプション）で決済します。
+            フリー（¥0・税込）は初回から14日間のお試しのみで、終了後は機能制限があります。有料プランは Stripe Checkout（本番はライブモードの API キー）で決済します。
           </p>
           {checkoutError && (
             <p className="mt-2 text-sm text-red-600" role="alert">
@@ -89,12 +89,12 @@ export default function BillingPage() {
                 <p className="text-xs sm:text-sm text-sky-800/80">現在のプラン</p>
                 <p className="text-sm sm:text-base font-bold text-sky-900 truncate">
                   {currentPlan === "free"
-                    ? "無料トライアル"
+                    ? "フリー（14日間お試し後は制限）"
                     : currentPlan === "lite"
                       ? "ライト"
                       : currentPlan === "standard"
                         ? "スタンダード"
-                        : "プロフェッショナル"}
+                        : "プロ"}
                 </p>
               </div>
             </div>
@@ -126,9 +126,9 @@ export default function BillingPage() {
             {/* Free */}
             <PlanCard
               planId="free"
-              title="無料"
-              priceLabel="¥0 / 月"
-              description="基本機能のみ（案件制限あり）"
+              title="フリー"
+              priceLabel="¥0 / 月（税込）"
+              description="14日間のお試しのみ。その後は機能制限"
               border="border-emerald-200"
               currentPlan={currentPlan}
               onSelect={handleSelectPlan}
@@ -147,7 +147,7 @@ export default function BillingPage() {
             <PlanCard
               planId="lite"
               title="ライト"
-              priceLabel="¥2,000 / 月"
+              priceLabel="¥2,980 / 月（税込）"
               description="小規模ラボ向け"
               border="border-slate-200"
               currentPlan={currentPlan}
@@ -169,7 +169,7 @@ export default function BillingPage() {
             <PlanCard
               planId="standard"
               title="スタンダード（推奨）"
-              priceLabel="¥12,000 / 月"
+              priceLabel="¥9,800 / 月（税込）"
               description="ほとんどのラボ向け"
               border="border-primary/20"
               currentPlan={currentPlan}
@@ -190,8 +190,8 @@ export default function BillingPage() {
             {/* Professional */}
             <PlanCard
               planId="professional"
-              title="プロフェッショナル"
-              priceLabel="¥39,800 / 月"
+              title="プロ"
+              priceLabel="¥19,800 / 月（税込）"
               description="大規模ラボ向け"
               border="border-amber-200"
               currentPlan={currentPlan}

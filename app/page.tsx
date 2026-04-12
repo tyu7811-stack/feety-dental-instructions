@@ -5,6 +5,7 @@ import {
   RolePersonaCards,
   RolePersonaCompactIntro,
 } from "@/components/marketing/role-persona-marketing"
+import { feetyAppUrl } from "@/lib/feety-app-origin"
 
 export const metadata: Metadata = {
   title: "FEETY | 歯科技工指示書クラウド",
@@ -38,7 +39,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-border/80 bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
-          <Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight">
+          <Link href={feetyAppUrl("/")} className="flex items-center gap-2.5 font-semibold tracking-tight">
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#1a6cf0] text-white">
               <FlaskConical className="h-4 w-4" aria-hidden />
             </span>
@@ -46,19 +47,19 @@ export default function HomePage() {
           </Link>
           <nav className="flex items-center gap-2 sm:gap-3">
             <Link
-              href="/plans"
+              href={feetyAppUrl("/plans")}
               className="hidden rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:inline-flex"
             >
               料金・プラン
             </Link>
             <Link
-              href="/login"
+              href={feetyAppUrl("/login")}
               className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             >
               ログイン
             </Link>
             <Link
-              href="/signup2"
+              href={feetyAppUrl("/signup2")}
               className="inline-flex items-center gap-1.5 rounded-lg bg-[#1a6cf0] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#1559cc]"
             >
               新規登録
@@ -87,14 +88,14 @@ export default function HomePage() {
             </div>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
-                href="/signup2"
+                href={feetyAppUrl("/signup2")}
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1a6cf0] px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-[#1a6cf0]/25 transition-all hover:bg-[#1559cc] active:scale-[0.98]"
               >
                 無料で始める
                 <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
               <Link
-                href="/login"
+                href={feetyAppUrl("/login")}
                 className="inline-flex items-center justify-center rounded-xl border border-border bg-card px-6 py-3.5 text-base font-semibold shadow-sm transition-colors hover:bg-accent"
               >
                 ログイン
@@ -143,14 +144,14 @@ export default function HomePage() {
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
-                href="/clinic/orders/new?demo=true"
+                href={feetyAppUrl("/clinic/orders/new?demo=true")}
                 className="inline-flex items-center gap-2 rounded-xl border-2 border-border bg-card px-6 py-3.5 text-base font-semibold text-foreground transition-colors hover:bg-accent"
               >
                 医院：新規指示書（デモ）
                 <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
               <Link
-                href="/lab/dashboard?demo=true"
+                href={feetyAppUrl("/lab/dashboard?demo=true")}
                 className="inline-flex items-center gap-2 rounded-xl bg-[#1a6cf0] px-6 py-3.5 text-base font-semibold text-white transition-colors hover:bg-[#1559cc]"
               >
                 技工所：ダッシュボード（デモ）
@@ -168,19 +169,24 @@ export default function HomePage() {
             FEETY
           </div>
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-            <Link href="/legal/terms" className="hover:text-foreground">
+            <Link href={feetyAppUrl("/legal/terms")} className="hover:text-foreground">
               利用規約
             </Link>
-            <Link href="/legal/tokushoho" className="hover:text-foreground">
+            <Link href={feetyAppUrl("/legal/tokushoho")} className="hover:text-foreground">
               特定商取引法に基づく表記
             </Link>
-            <Link href="/plans" className="hover:text-foreground">
+            <Link href={feetyAppUrl("/plans")} className="hover:text-foreground">
               料金・プラン
             </Link>
           </div>
-          <p className="text-center text-xs text-muted-foreground sm:text-right">
-            開発・運営：ナチュラルアート
-          </p>
+          <div className="text-center text-xs text-muted-foreground sm:text-right space-y-1">
+            <p>販売者・問い合わせ窓口：ナチュラルアート</p>
+            <p>
+              <a href="mailto:tyu66457@gmail.com" className="hover:text-foreground underline-offset-2 hover:underline">
+                tyu66457@gmail.com
+              </a>
+            </p>
+          </div>
         </div>
       </footer>
     </div>
