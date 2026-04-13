@@ -14,6 +14,12 @@ alwaysApply: true
 3. `git push origin main` を実行する。
 4. 本番 URL は **https://www.seo-oji.space**（デプロイ完了は Vercel ダッシュボードの Deployments で確認）。
 
+## 本番と旧デプロイ（v0-dental-system-roles）
+
+- **本番アプリの URL は `https://www.seo-oji.space` のみ**とする。メール・Cron・外部リンクの例もこのドメインに統一する。
+- 旧 **`v0-dental-system-roles.vercel.app`** の Vercel プロジェクトは **運用しない**（**Pause** または **Delete** し、ドキュメント・リンク・環境変数の例に含めない）。別リポジトリ／別プロジェクトのプレビュー用 URL として残っていたもの。
+- マーケ LP は **`v0-dental-lab-automation.vercel.app`**（ELUAS）、**本番アプリ**は **`feety-dental-instructions` → `www.seo-oji.space`** と役割を分ける。
+
 ## マーケ LP（v0）と旧 Vercel ドメイン
 
 - 公開 LP を **v0-dental-lab-automation.vercel.app** に置き、**feety-dental-instructions.vercel.app** を切り離す場合は、後者の Vercel プロジェクトに環境変数 **`LEGACY_FEETY_VERCEL_HOST`** と **`MARKETING_SITE_ORIGIN`** を設定する（`lib/middleware/legacy-vercel-host-redirect.ts`）。マーケ用パスは v0 へ、ログイン・`/lab`・API は `NEXT_PUBLIC_FEETY_APP_ORIGIN`（本番アプリ）へリダイレクトされる。

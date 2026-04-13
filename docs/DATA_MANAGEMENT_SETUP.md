@@ -16,8 +16,9 @@ CRON_SECRET=your-secure-random-string
 ```
 
 ### サイトURL
+本番は **https://www.seo-oji.space** のみを参照する（旧プレビュー `v0-dental-system-roles.vercel.app` は使わない）。
 ```
-NEXT_PUBLIC_SITE_URL=https://v0-dental-system-roles.vercel.app
+NEXT_PUBLIC_SITE_URL=https://www.seo-oji.space
 ```
 
 ## Cronジョブの設定
@@ -41,7 +42,7 @@ NEXT_PUBLIC_SITE_URL=https://v0-dental-system-roles.vercel.app
 
 1. **EasyCron** (https://www.easycron.com/) にアクセス
 2. 新しいCronジョブを作成
-3. URL: `https://v0-dental-system-roles.vercel.app/api/cron/data-cleanup`
+3. URL: `https://www.seo-oji.space/api/cron/data-cleanup`
 4. ヘッダー:
    - `x-cron-secret`: CRON_SECRET環境変数の値
 5. スケジュール: `0 2 * * *` (毎日 2時)
@@ -133,7 +134,7 @@ NEXT_PUBLIC_SITE_URL=https://v0-dental-system-roles.vercel.app
 ```bash
 # 手動でCronジョブをトリガー
 curl -H "x-cron-secret: your-cron-secret" \
-  https://v0-dental-system-roles.vercel.app/api/cron/data-cleanup
+  https://www.seo-oji.space/api/cron/data-cleanup
 ```
 
 ### データエクスポート
