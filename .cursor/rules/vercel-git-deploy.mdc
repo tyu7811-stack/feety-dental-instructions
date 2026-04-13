@@ -18,6 +18,7 @@ alwaysApply: true
 
 - 公開 LP を **v0-dental-lab-automation.vercel.app** に置き、**feety-dental-instructions.vercel.app** を切り離す場合は、後者の Vercel プロジェクトに環境変数 **`LEGACY_FEETY_VERCEL_HOST`** と **`MARKETING_SITE_ORIGIN`** を設定する（`lib/middleware/legacy-vercel-host-redirect.ts`）。マーケ用パスは v0 へ、ログイン・`/lab`・API は `NEXT_PUBLIC_FEETY_APP_ORIGIN`（本番アプリ）へリダイレクトされる。
 - v0 側の「お申し込み」「無料で始める」等のリンク先は、**本番アプリ**の `/signup2`・`/login`・ログイン後の `/lab/billing`（Stripe）に手動で合わせる。
+- **`https://v0-dental-lab-automation.vercel.app/signup` の最終確定・完了後**は、未ログインのまま決済できないため、**本番アプリ**の **`https://www.seo-oji.space/signup`**（`/signup2` へリダイレクト）または **`https://www.seo-oji.space/signup2`** へ遷移させる。技工所で登録直後にセッションが付く場合は、その後 **`/lab/billing` → Stripe Checkout → `/`** となる（v0 リポジトリの完了画面の URL を上記に変更する）。
 
 ## 例外（push しない）
 
