@@ -17,6 +17,7 @@ export default function BillingPage() {
   const [planLoading, setPlanLoading] = useState(true)
   const [checkoutPlan, setCheckoutPlan] = useState<Exclude<Plan, "free"> | null>(null)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
+  const [fromSignup, setFromSignup] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -64,6 +65,9 @@ export default function BillingPage() {
     const q = new URLSearchParams(window.location.search)
     if (q.get("canceled") === "1") {
       setCheckoutError("Checkout をキャンセルしました")
+    }
+    if (q.get("from") === "signup") {
+      setFromSignup(true)
     }
   }, [])
 
@@ -127,6 +131,15 @@ export default function BillingPage() {
             </p>
           )}
         </div>
+
+        {fromSignup && (
+          <div
+            className="mb-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-950"
+            role="status"
+          >
+            登録ありがとうございます。ご希望のプランを選び Stripe でお支払いを完了すると、トップ（ログイン画面）へ戻ります。
+          </div>
+        )}
 
         {/* Current Plan Status */}
         <div className="mb-6 rounded-xl border border-sky-200 bg-sky-50/80 p-3 sm:p-4">

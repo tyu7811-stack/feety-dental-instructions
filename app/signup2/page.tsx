@@ -157,6 +157,11 @@ export default function RegisterPage() {
           setLoading(false)
           return
         }
+        if (userType === "lab") {
+          router.replace("/lab/billing?from=signup")
+          setLoading(false)
+          return
+        }
       }
 
       setSuccess(true)

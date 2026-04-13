@@ -32,7 +32,7 @@ export default function BillingSuccessPage() {
       if (data.planId) {
         window.localStorage.setItem(STORAGE_KEY, data.planId)
       }
-      router.replace("/lab/billing")
+      router.replace("/")
     })()
 
     return () => {
@@ -43,8 +43,8 @@ export default function BillingSuccessPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-6 bg-gradient-to-b from-slate-50 to-white">
       <p className="text-sm text-gray-700">{message}</p>
-      <Link href="/lab/billing" className="text-sm text-primary hover:underline">
-        請求ページに戻る
+      <Link href="/" className="text-sm text-primary hover:underline">
+        トップへ
       </Link>
     </div>
   )
