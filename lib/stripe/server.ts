@@ -3,6 +3,7 @@ import Stripe from "stripe"
 let stripe: Stripe | null = null
 
 export function getStripe(): Stripe {
+  /** テストは `sk_test_...`、本番ライブは `sk_live_...`（いずれも環境変数 `STRIPE_SECRET_KEY`） */
   const key = process.env.STRIPE_SECRET_KEY
   if (!key) {
     throw new Error("STRIPE_SECRET_KEY is not set")

@@ -99,7 +99,3 @@ export async function completeSignupProvisioning(
 
   return { error: null }
 }
-
-export function dashboardPathForUser(user: User): "/lab/dashboard" | "/clinic/dashboard" {
-  return roleFromUser(user) === "lab" ? "/lab/dashboard" : "/clinic/dashboard"
-}

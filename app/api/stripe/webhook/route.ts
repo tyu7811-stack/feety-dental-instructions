@@ -9,6 +9,12 @@ import { getStripe } from "@/lib/stripe/server"
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
+/**
+ * Stripe ダッシュボードでエンドポイント `https://www.seo-oji.space/api/stripe/webhook` を登録し、
+ * 少なくとも次を購読する: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`。
+ * 署名検証に `STRIPE_WEBHOOK_SECRET`（Signing secret）を設定する。
+ */
+
 export async function POST(request: NextRequest) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET
   if (!secret) {

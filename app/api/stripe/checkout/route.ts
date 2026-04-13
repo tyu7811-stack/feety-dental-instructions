@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       line_items: checkoutLineItemsForPaidPlan(planId, { includeInitialFee }),
-      success_url: `${origin}/lab/billing/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${origin}/?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/lab/billing?canceled=1`,
       client_reference_id: user.id,
       metadata: {

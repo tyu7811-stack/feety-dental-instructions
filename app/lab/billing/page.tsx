@@ -18,6 +18,7 @@ export default function BillingPage() {
   const [checkoutPlan, setCheckoutPlan] = useState<Exclude<Plan, "free"> | null>(null)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
   const [fromSignup, setFromSignup] = useState(false)
+  const [fromAuth, setFromAuth] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -68,6 +69,9 @@ export default function BillingPage() {
     }
     if (q.get("from") === "signup") {
       setFromSignup(true)
+    }
+    if (q.get("from") === "auth") {
+      setFromAuth(true)
     }
   }, [])
 
@@ -138,6 +142,15 @@ export default function BillingPage() {
             role="status"
           >
             登録ありがとうございます。ご希望のプランを選び Stripe でお支払いを完了すると、トップ（ログイン画面）へ戻ります。
+          </div>
+        )}
+
+        {fromAuth && !fromSignup && (
+          <div
+            className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950"
+            role="status"
+          >
+            有料プランが未契約、または契約が有効ではありません。お支払いを完了するとダッシュボードへ進めます。
           </div>
         )}
 

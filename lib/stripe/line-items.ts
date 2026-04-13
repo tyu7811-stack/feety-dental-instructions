@@ -4,19 +4,24 @@ import {
   INITIAL_FEE_TAX_INCLUDED_JPY,
   PLAN_CATALOG,
 } from "@/lib/stripe/catalog"
+import { STRIPE_ENV } from "@/lib/stripe/stripe-env-names"
 
 /**
  * 月額サブスクの1行。Price ID 優先。
- * STRIPE_PRICE_LITE_MONTHLY または後方互換 STRIPE_PRICE_LITE
+ * 月額 Price ID: `STRIPE_ENV`（`lib/stripe/stripe-env-names.ts`）の変数名を参照。
  */
 function recurringLineItem(
   planId: BillablePlanId
 ): Stripe.Checkout.SessionCreateParams.LineItem {
-  const u = planId.toUpperCase()
-  const monthlyKey = `STRIPE_PRICE_${u}_MONTHLY` as const
-  const legacyKey = `STRIPE_PRICE_${u}` as const
   const priceId =
-    process.env[monthlyKey]?.trim() || process.env[legacyKey]?.trim()
+    planId === "lite"
+      ? process.env[STRIPE_ENV.priceLiteMonthly]?.trim() ||
+        process.env[STRIPE_ENV.priceLiteLegacy]?.trim()
+      : planId === "standard"
+        ? process.env[STRIPE_ENV.priceStandardMonthly]?.trim() ||
+          process.env[STRIPE_ENV.priceStandardLegacy]?.trim()
+        : process.env[STRIPE_ENV.priceProfessionalMonthly]?.trim() ||
+          process.env[STRIPE_ENV.priceProfessionalLegacy]?.trim()
 
   if (priceId) {
     return { price: priceId, quantity: 1 }
@@ -36,7 +41,7 @@ function recurringLineItem(
 
 /** 初回のみ（税込）。Price ID 優先。 */
 function initialFeeLineItem(): Stripe.Checkout.SessionCreateParams.LineItem {
-  const priceId = process.env.STRIPE_PRICE_INITIAL_FEE?.trim()
+  const priceId = process.env[STRIPE_ENV.priceInitialFee]?.trim()
   if (priceId) {
     return { price: priceId, quantity: 1 }
   }

@@ -8,6 +8,10 @@ import { createClient } from "@/lib/supabase/client"
 import { waitUntilSupabaseAuthCookiesVisible } from "@/lib/supabase/wait-auth-cookies"
 import Link from "next/link"
 import { feetyAppUrl } from "@/lib/feety-app-origin"
+import {
+  fetchLabSubscriptionSnapshot,
+  labPostAuthPath,
+} from "@/lib/subscription/lab-subscription"
 
 export default function LoginPage() {
   const supabase = createClient()
@@ -82,7 +86,11 @@ export default function LoginPage() {
           setIsLoading(false)
           return
         }
-        destination = "/lab/dashboard"
+        const snap = await fetchLabSubscriptionSnapshot(supabase, data.user.id)
+        destination =
+          labPostAuthPath(snap) === "/lab/billing"
+            ? "/lab/billing?from=auth"
+            : "/lab/dashboard"
       } else if (registeredRole === "clinic") {
         if (selectedRole === "lab") {
           setError(
@@ -94,8 +102,15 @@ export default function LoginPage() {
         }
         destination = "/clinic/dashboard"
       } else {
-        destination =
-          selectedRole === "lab" ? "/lab/dashboard" : "/clinic/dashboard"
+        if (selectedRole === "lab") {
+          const snap = await fetchLabSubscriptionSnapshot(supabase, data.user.id)
+          destination =
+            labPostAuthPath(snap) === "/lab/billing"
+              ? "/lab/billing?from=auth"
+              : "/lab/dashboard"
+        } else {
+          destination = "/clinic/dashboard"
+        }
       }
 
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ""

@@ -12,6 +12,7 @@ import {
   parseCookieNamesFromHeader,
   supabaseAuthCookieOptionsForServer,
 } from "@/lib/supabase/cookie-options"
+import { resolvePostAuthRedirectPath } from "@/lib/auth/post-auth-redirect"
 
 /**
  * getUser() でセッション更新した際に付く Set-Cookie を、
@@ -58,16 +59,6 @@ function redirectPreservingAuthCookies(
   if (search !== undefined) url.search = search
   const redirect = NextResponse.redirect(url)
   return copyCookiesFromResponse(supabaseResponse, redirect)
-}
-
-function postLoginPathForUser(user: User): string {
-  const role =
-    (user.user_metadata?.role as string | undefined) ??
-    (user.user_metadata?.user_type as string | undefined) ??
-    (user.app_metadata?.role as string | undefined)
-  if (role === "admin") return "/admin"
-  if (role === "clinic") return "/clinic/dashboard"
-  return "/lab/dashboard"
 }
 
 export async function updateSession(request: NextRequest) {
@@ -166,7 +157,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (user && (pathname === "/login" || pathname === "/auth/login")) {
-    const dest = postLoginPathForUser(user)
+    const dest = await resolvePostAuthRedirectPath(supabase, user)
     return redirectPreservingAuthCookies(
       request,
       supabaseResponse,

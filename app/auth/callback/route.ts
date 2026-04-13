@@ -4,10 +4,8 @@ import { cookies } from "next/headers"
 import { getSupabaseEnv } from "@/lib/supabase"
 import { getSupabaseCreateClientAuthOptions } from "@/lib/supabase/auth-cookie-contract"
 import { supabaseAuthCookieOptionsForServer } from "@/lib/supabase/cookie-options"
-import {
-  completeSignupProvisioning,
-  dashboardPathForUser,
-} from "@/lib/auth/complete-signup-profile"
+import { resolvePostAuthRedirectPath } from "@/lib/auth/post-auth-redirect"
+import { completeSignupProvisioning } from "@/lib/auth/complete-signup-profile"
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
@@ -63,6 +61,6 @@ export async function GET(request: Request) {
     console.error("completeSignupProvisioning:", provError)
   }
 
-  const next = dashboardPathForUser(user)
+  const next = await resolvePostAuthRedirectPath(supabase, user)
   return NextResponse.redirect(`${origin}${next}`)
 }

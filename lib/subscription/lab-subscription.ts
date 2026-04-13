@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js"
 import type { LabPlanMarketingId } from "@/lib/content/lab-plans"
+import { isBillablePlanId } from "@/lib/stripe/catalog"
 
 export type LabSubscriptionSnapshot = {
   plan: LabPlanMarketingId
@@ -29,6 +30,21 @@ export function computeCanGenerateInvoice(
 ): boolean {
   if (!subscriptionStatusAllowsPaidFeatures(status)) return false
   return plan === "lite" || plan === "standard" || plan === "professional"
+}
+
+/** アクティブな有料プラン契約があるか（ログイン後の遷移先判定用） */
+export function labHasActivePaidSubscription(snapshot: LabSubscriptionSnapshot): boolean {
+  return (
+    subscriptionStatusAllowsPaidFeatures(snapshot.status) &&
+    isBillablePlanId(snapshot.plan)
+  )
+}
+
+/**
+ * 技工所: 未契約・フリー・解約など「有料が有効でない」場合は請求へ、それ以外はダッシュボードへ。
+ */
+export function labPostAuthPath(snapshot: LabSubscriptionSnapshot): "/lab/billing" | "/lab/dashboard" {
+  return labHasActivePaidSubscription(snapshot) ? "/lab/dashboard" : "/lab/billing"
 }
 
 export async function fetchLabSubscriptionSnapshot(

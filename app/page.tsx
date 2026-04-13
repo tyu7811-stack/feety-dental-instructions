@@ -15,6 +15,7 @@ import {
 } from "@/lib/stripe/catalog"
 import { cn } from "@/lib/utils"
 import { HomeAuthErrorBanner } from "@/components/marketing/home-auth-error-banner"
+import { HomeStripeCheckoutReturn } from "@/components/marketing/home-stripe-checkout-return"
 
 export const metadata: Metadata = {
   title: "FEETY | 歯科技工指示書クラウド",
@@ -48,6 +49,9 @@ export default function HomePage() {
     <div className="min-h-screen bg-background text-foreground">
       <Suspense fallback={null}>
         <HomeAuthErrorBanner />
+      </Suspense>
+      <Suspense fallback={null}>
+        <HomeStripeCheckoutReturn />
       </Suspense>
       <header className="sticky top-0 z-40 border-b border-border/80 bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
