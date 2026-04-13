@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   const code = searchParams.get("code")
 
   if (!code) {
-    return NextResponse.redirect(`${origin}/signup2?error=auth_callback`)
+    return NextResponse.redirect(`${origin}/?error=auth_callback`)
   }
 
   const cookieStore = await cookies()
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
 
   if (exchangeError) {
     return NextResponse.redirect(
-      `${origin}/signup2?error=${encodeURIComponent(exchangeError.message)}`
+      `${origin}/?error=${encodeURIComponent(exchangeError.message)}`
     )
   }
 
@@ -54,7 +54,7 @@ export async function GET(request: Request) {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return NextResponse.redirect(`${origin}/signup2?error=no_user`)
+    return NextResponse.redirect(`${origin}/?error=no_user`)
   }
 
   const { error: provError } = await completeSignupProvisioning(supabase, user)

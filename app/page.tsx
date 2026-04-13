@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
 import Link from "next/link"
 import { ArrowRight, FlaskConical, FileText, Shield, Sparkles } from "lucide-react"
 import {
@@ -13,6 +14,7 @@ import {
   initialFeeSummaryLine,
 } from "@/lib/stripe/catalog"
 import { cn } from "@/lib/utils"
+import { HomeAuthErrorBanner } from "@/components/marketing/home-auth-error-banner"
 
 export const metadata: Metadata = {
   title: "FEETY | 歯科技工指示書クラウド",
@@ -44,6 +46,9 @@ const features = [
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <Suspense fallback={null}>
+        <HomeAuthErrorBanner />
+      </Suspense>
       <header className="sticky top-0 z-40 border-b border-border/80 bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <Link href={feetyAppUrl("/")} className="flex items-center gap-2.5 font-semibold tracking-tight">
