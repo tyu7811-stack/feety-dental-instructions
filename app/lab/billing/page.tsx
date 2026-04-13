@@ -147,10 +147,13 @@ export default function BillingPage() {
 
         {fromAuth && !fromSignup && (
           <div
-            className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950"
+            className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-950"
             role="status"
           >
-            有料プランが未契約、または契約が有効ではありません。お支払いを完了するとダッシュボードへ進めます。
+            <p className="font-medium">ご登録ありがとうございます。</p>
+            <p className="mt-1.5 leading-relaxed">
+              サービスの利用を開始するには、プランの選択とお支払い（Stripe）をお願いします。完了後はトップページへ戻ります。
+            </p>
           </div>
         )}
 

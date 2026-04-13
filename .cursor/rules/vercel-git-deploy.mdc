@@ -18,7 +18,7 @@ alwaysApply: true
 
 - 公開 LP を **v0-dental-lab-automation.vercel.app** に置き、**feety-dental-instructions.vercel.app** を切り離す場合は、後者の Vercel プロジェクトに環境変数 **`LEGACY_FEETY_VERCEL_HOST`** と **`MARKETING_SITE_ORIGIN`** を設定する（`lib/middleware/legacy-vercel-host-redirect.ts`）。マーケ用パスは v0 へ、ログイン・`/lab`・API は `NEXT_PUBLIC_FEETY_APP_ORIGIN`（本番アプリ）へリダイレクトされる。
 - v0 側の「お申し込み」「無料で始める」等のリンク先は、**本番アプリ**の `/signup2`・`/login`・ログイン後の `/lab/billing`（Stripe）に手動で合わせる。
-- **ELUAS（v0）「お申し込みウィザード」最終ステップ（確定）成功後**の URL は **`https://www.seo-oji.space/signup`** にする（本リポジトリの `/signup` → `/signup2`）。未ログインのまま決済できないため、登録後に **`/lab/billing` → Stripe Checkout → 成功時は `/`（`?session_id=` で戻り検証）**。
+- **ELUAS（v0）「お申し込みウィザード」最終ステップ（確定）成功後**の URL は **`eluasWizardCompletionRedirectUrl()`**（`lib/marketing/eluas-wizard-redirect.ts`）＝本番では **`https://www.seo-oji.space/signup`** に統一する（`/signup` → `/signup2`）。未ログインのまま決済できないため、登録後に **`/lab/billing` → Stripe Checkout → 成功時は `/`（`?session_id=` で戻り検証）**。
 - Supabase Auth の **Redirect URLs** に `https://www.seo-oji.space/auth/callback`（および必要ならプレビュー URL）を含める。メール確認後は `/auth/callback` → 未契約の技工所は **`/lab/billing?from=auth`** へ寄せる実装と整合させる。
 
 ## 例外（push しない）

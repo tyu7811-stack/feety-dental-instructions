@@ -1,6 +1,13 @@
 /**
- * Stripe Checkout / Webhook が参照する環境変数名（本番ライブの `price_...` を Vercel に設定）。
- * 金額のソース・オブリは `lib/stripe/catalog.ts`。
+ * Stripe Checkout / Webhook が参照する環境変数名。
+ *
+ * 本番ライブ例:
+ * - `STRIPE_SECRET_KEY`: `sk_live_...`
+ * - `STRIPE_WEBHOOK_SECRET`: ライブ Webhook エンドポイントの Signing secret（`whsec_...`）
+ * - 月額・初回: 下記 `price*` キーに各 `price_...`（単一の `STRIPE_PRICE_ID` は未使用。プラン別 ID を推奨）
+ * - Webhook が Supabase の `subscriptions` を更新するには `SUPABASE_SERVICE_ROLE_KEY` が必須（`lib/supabase/admin.ts`）
+ *
+ * 金額のフォールバックは `lib/stripe/catalog.ts`。
  */
 export const STRIPE_ENV = {
   secretKey: "STRIPE_SECRET_KEY",

@@ -55,12 +55,14 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/?error=no_user`)
   }
 
+  // 1) メール確認直後に profiles / labs / clinics を揃える（emailRedirectTo は /auth/callback のまま）
   const { error: provError } = await completeSignupProvisioning(supabase, user)
 
   if (provError) {
     console.error("completeSignupProvisioning:", provError)
   }
 
+  // 2) 遷移先決定。3) 技工所で有料が未契約・無効なら /lab/billing?from=auth（resolvePostAuthRedirectPath 内）
   const next = await resolvePostAuthRedirectPath(supabase, user)
   return NextResponse.redirect(`${origin}${next}`)
 }
